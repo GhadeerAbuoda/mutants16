@@ -1,0 +1,24 @@
+\subsection{Key Novel Features of Localization}
+
+One key point is that the localization information provided by
+repairing mutants is different in kind from that typically provided by
+fault localization, particularly statistically-driven localizations.
+Namely, the relationship between a mutant and the underlying fault is
+\emph{always} causal.  There are not ``accidental'' repairs; at
+minimum, a mutant modifies program behavior such that the faulty code
+no longer causes a fault, which it would have under other
+circumstances.  This means that unlike traditional localizations,
+where reading ``incorrect'' suggestions (e.g., ones that are not an
+actual faulty location) is often of no value, every mutant that
+repairs a program provides some information about the fault, however
+obscure.  Some repairs, of course, are of little interest because they repair too much.
+
+A second point is that unlike the use of program modifications in
+automatic patch generation, our technique is not defeated by weak
+oracles.  Of course, if an oracle is too weak to detect failures at
+all, it cannot be applied, but given the ability to detect failures,
+it is not critical that a suite be able to check correctness.  Our
+repairing mutants are not meant to serve as actual program patches,
+but 1) as features to drive a fuzzer taming algorithm and 2) as error
+explanations and fault localization to ease the debugging of complex
+compiler faults.

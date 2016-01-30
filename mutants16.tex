@@ -1,0 +1,74 @@
+%
+% LaTeX template for prepartion of submissions to PLDI'16
+%
+% Requires temporary version of sigplanconf style file provided on
+% PLDI'16 web site.
+% 
+\documentclass{sig-alternate-05-2015}
+% \documentclass[pldi-cameraready]{sigplanconf-pldi16}
+
+%
+% the following standard packages may be helpful, but are not required
+%
+%\usepackage{SIunits}            % typset units correctly
+%\usepackage{courier}            % standard fixed width font
+\usepackage[scaled]{helvet} % see www.ctan.org/get/macros/latex/required/psnfss/psnfss2e.pdf
+\usepackage{url}                  % format URLs
+\usepackage{listings}          % format code
+\usepackage{enumitem}      % adjust spacing in enums
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{code}
+%\usepackage[colorlinks=true,allcolors=blue,breaklinks,draft=false]{hyperref}   % hyperlinks, including DOIs and URLs in bibliography
+% known bug: http://tex.stackexchange.com/questions/1522/pdfendlink-ended-up-in-different-nesting-level-than-pdfstartlink
+%\newcommand{\doi}[1]{doi:~\href{http://dx.doi.org/#1}{\Hurl{#1}}}   % print a hyperlinked DOI
+
+\numberofauthors{2}
+
+\author{
+\alignauthor
+Alex Groce\\
+       \affaddr{School of Electrical Engineering and Computer Science}\\
+       \affaddr{Oregon State University}\\
+%       \email{agroce@gmail.com}
+% 2nd. author
+\alignauthor
+Josie Holmes\\
+       \affaddr{Department of Geography}\\
+       \affaddr{Pennsylvania State University}\\
+%       \email{webmaster@marysville-ohio.com}
+}
+
+\begin{document}
+
+\title{A Mutant-Based Distance Metric for Program Executions}
+
+%
+% any author declaration will be ignored  when using 'pldi' option (for double blind review)
+%
+
+%\authorinfo{Person 1 \and Person 2}
+%{\makebox{A Department} \\
+%\makebox{A University}  \\
+%\makebox{A Place, AS 12345}}
+%{\{person1,person2\}@cs.auniv.edu}
+
+\maketitle
+
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+\input{introduction}
+\input{metrics}
+\input{localizations}
+\input{experiments}
+\input{relatedwork}
+\input{conclusions}
+
+\bibliographystyle{abbrv}
+\bibliography{bibliography}
+
+\end{document}

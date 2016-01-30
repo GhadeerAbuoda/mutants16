@@ -1,0 +1,55 @@
+\section{A Mutant-Based Distance Metric}
+
+For every failure, the response to mutants defines a bit-vector, with
+length equal to the number of mutants that repaired any test case,
+where a 1 bit indicates that the mutant in question repairs the test
+case.
+
+The simplest distance metric for two bit-vectors of equal length is a
+Hamming distance.  However, raw Hamming distance has some unfortunate
+properties.  Consider two test cases, $t_1$ and $t_2$, both repaired
+by 100 mutants.  If these two test cases share 90 common repairing
+mutants, and disagree for 10, they have a raw Hamming
+distance of 20.  This makes them ``less similar'' than two test cases,
+$t_1'$ and $t_2'$, where $t_1'$ is repaired by 5 mutants, $t_2'$ is
+repaired by 5 mutants, and \emph{none of those mutants overlap.}   Hamming distance for the first pair of tests is twice as
+large, despite the fact we have no evidence $t_1'$ and
+$t_2'$ are due to the same fault, in contrast to strong evidence for $t_1$ and $t_2$.  A Jaccard distance, used in some fault
+localization algorithms \cite{Liu06}, fits the situation more
+effectively.  For bitvectors $u$ and $v$ of length $n$:
+%\vspace{-0.08in}
+\[d(u,v) = 
+\begin{cases}
+\frac{\sum_{i=0}^{n-1} 1\ \text{if}\ u_i \neq v_i\ \text{else}\ 0}{\sum_{i=0}^{n-1} 1
+\  \text{if}\ u_i \neq 0 \vee v_i \neq 0\ \text{else}\ 0} & \exists i:u_i\neq 0 \vee v_i\neq 0\\
+0 & otherwise
+\end{cases}
+\]
+
+This metric matches our intuitions about the above comparisons.  It
+essentially formalizes the intuition of the onion-ring model, where
+more matching repairs indicates a much higher probability two failures
+are due to the same fault, even if not all repairs match.
+
+Given such a metric, the FPF \cite{Gonzalez} approach to fuzzer taming \cite{PLDI13}
+begins by selecting an arbitrary test case.   FPF then proceeds by selecting the test
+case, of all unranked tests, that has the largest minimum distance
+from all already ranked test cases, repeating this until all tests are
+ranked.  In other words, FPF always chooses a test case that is as dissimilar as
+possible from all previously chosen test cases, based on the closest
+chosen test case (rather than an average distance or other measure).  FPF is boundedly close
+to optimal under certain assumptions \cite{Gonzalez}.
+
+More complex metrics are possible, also combining information such as
+coverage and language features or test case tokens \cite{PLDI13}.
+However, mixtures of metrics (combining different features) other than
+Levenshteins \cite{lev} over test case + output never performed well
+compared to more focused metrics in earlier work \cite{PLDI13}.
+Therefore, in order to evaluate the contribution of our repair-based
+metric we compare it, alone, to the previous best metrics.
+
+In Section \ref{conc} we briefly discuss possible uses of $d$
+requiring comparison of both failing and passing test cases. The only
+change required is to use three-valued vectors with a value for each
+property and mutant, where 1 indicates a failing property succeeds (as
+in our $d$) and -1 indicates a succeeding property fails.

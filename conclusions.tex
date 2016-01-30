@@ -1,0 +1,37 @@
+\section{Conclusions and Future Work}
+\label{conc}
+
+When are two failing test cases due to the same fault?  This paper
+demonstrates that
+``when they are repaired by the same program mutants'' is a useful answer to
+this question.  The problem of causality in executions is hard, and
+has long been tied to a notion of similarity of
+executions \cite{NearNeighbor,GroceError}.  By using program changes
+(produced by mutants) as
+causes to determine distance, it is possible to improve on efforts
+to identify the set of faults in a large set of redundant failures
+\cite{PLDI13} and discover the source code locations of faults
+\cite{MUSE,multilingual}.
+
+As future work, we plan to apply the mutation-based metric to other
+fuzzer taming and fault localization problems.  The highly varying
+results for even the best fault localization methods in our
+experiments demonstrate that further advances are required before
+compiler debugging can consistently be made less onerous through automated
+assistance.  One idea is to combine the metric approach and the ideas
+in MUSE and MUSEUM, in some way, to exploit passing tests and perhaps
+additional coverage information.
+
+%We also plan to explore other applications of mutant-based metrics.
+Many software engineering techniques rely on measuring distance
+between program executions.  Not all of these concern failing
+executions.  For example, Zhang et al. \cite{issta14} show that FPF based on a simple
+Hamming distance over branches covered can significantly improve the
+effectiveness of seeded symbolic execution
+\cite{Zesti,PersonSeed,BugRedux}.  Mutation response is likely too
+expensive to use for this purpose without modification, but sampling
+mutants to refine distance when distances plateau
+may be practical.  Mutants may also be useful in determining
+execution peers \cite{Sumner2011}, for example to help operators of
+spacecraft find similar behaviors to telemetry downloads in testbed
+history \cite{KlausRajeev,scriptstospecs}.
