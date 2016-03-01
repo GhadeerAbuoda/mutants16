@@ -28,13 +28,11 @@ essentially formalizes the intuition of the onion-ring model, where
 more matching repairs indicates a much higher probability two failures
 are due to the same fault, even if not all repairs match.
 
-Given such a metric, the FPF \cite{Gonzalez} approach to fuzzer taming \cite{PLDI13}
-begins by selecting an arbitrary test case.   FPF then proceeds by selecting the test
+Given such a metric, FPF \cite{Gonzalez} fuzzer taming \cite{PLDI13}
+begins by ranking as first an arbitrary test case.   FPF next ranks the test
 case, of all unranked tests, that has the largest minimum distance
-from all already ranked test cases, repeating this until all tests are
-ranked.  In other words, FPF always chooses a test case that is as dissimilar as
-possible from all previously chosen test cases, based on the \emph{closest
-already chosen} test case.  FPF is boundedly close
+from all ranked test cases --- the test case most dissimilar by \emph{closest}
+already ranked test --- until all tests are ranked.  FPF is boundedly close
 to optimal under certain assumptions \cite{Gonzalez}.
 
 More complex metrics are possible, also combining information such as
