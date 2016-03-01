@@ -3,7 +3,7 @@
 For every failing test case, its response to mutants defines a bit-vector, with
 length equal to the number of mutants that repaired any test case,
 where a 1 bit indicates that the mutant in question repairs this test
-case.  Hamming distance between vectors is not suitable for our purposes.  Consider two test cases, $t_1$ and $t_2$, both repaired
+case.  These cannot be effectively compared with Hamming distance. Consider $t_1$ and $t_2$, both repaired
 by 100 mutants.  If these two test cases share 90 common repairing
 mutants, and disagree for 10, they have a Hamming
 distance of 20.  This makes them ``less similar'' than two test cases,
