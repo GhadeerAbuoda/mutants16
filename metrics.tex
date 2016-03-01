@@ -10,8 +10,9 @@ distance of 20.  This makes them ``less similar'' than two test cases,
 $t_1'$ and $t_2'$, where $t_1'$ is repaired by 5 mutants, $t_2'$ is
 repaired by 5 mutants, and \emph{none of those mutants overlap.}   Hamming distance for the first pair of tests is twice as
 large, despite the fact we have no evidence $t_1'$ and
-$t_2'$ are due to the same fault, in contrast to strong evidence for $t_1$ and $t_2$.  A Jaccard distance, used in some fault
-localization algorithms \cite{Liu06}, is a better fit.  For bitvectors $u$ and $v$ of length $n$:
+$t_2'$ are due to the same fault, in contrast to strong evidence for
+$t_1$ and $t_2$.  A Jaccard distance, also used (as similarity) in some fault
+localization algorithms \cite{Pinpoint}, is a better fit.  For bitvectors $u$ and $v$ of length $n$:
 %\vspace{-0.08in}
 \[d(u,v) = 
 \begin{cases}

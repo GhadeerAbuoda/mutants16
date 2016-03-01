@@ -24,7 +24,8 @@ additional coverage information.
 
 %We also plan to explore other applications of mutant-based metrics.
 Many software engineering techniques rely on measuring distance
-between program executions.  Not all of these concern failing
+between program executions \cite{BallConcept,NearNeighbor}.  Not all
+of these concern only failing
 executions.  For example, Zhang et al. \cite{issta14} show that FPF based on a simple
 Hamming distance over branches covered can significantly improve the
 effectiveness of seeded symbolic execution
@@ -33,5 +34,5 @@ expensive to use for this purpose without modification, but sampling
 mutants to refine distance when coarser metrics plateau
 may be practical.  Mutants may also be useful in determining
 execution peers \cite{Sumner2011}, for example to help operators of
-spacecraft find similar behaviors to telemetry downloads in testbed
+spacecraft find similar behaviors to telemetry downlinks in testbed
 history \cite{KlausRajeev,scriptstospecs}.
