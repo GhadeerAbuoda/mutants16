@@ -35,7 +35,7 @@ behavior of the test.  In some cases, this behavioral change is
 limited to changes in program state and data values.  However, the
 vast majority of mutant repairs also modify the code coverage of a
 test; in our experiments, there were no repairs that did not change
-coverage.  If a fault can be avoided by, for example, avoiding a
+coverage.  If a fault can be avoided by, for example, disabling a
 problematic optimization in a compiler, this naturally leads to
 changed coverage.  If the fault is due to a bad conditional, where a
 program path should include additional code, the repair will often
