@@ -26,9 +26,11 @@ No obvious patterns, but differences would be complex properties of C/JavaScript
 
 Q: ...sampling does alter the results... undesirable happening in terms of the onion ring model.
 
-Sampling hurts localization, there are probably ways to do good sampling for fuzzer taming (we are investigating).  Our guess: localization is bad when nothing in the middle of the onion ring is left, and that set could be small.
+Sampling hurts localization, maybe mostly ok for taming (we're investigating more).  Our guess: localization is bad when nothing in the middle of the onion ring is left (could be small set), which taming can handle.
 
-We'll provide numbers on runtimes (JavaScript not bad, GCC pretty bad, but we ran build/mutants in a very inefficient way).
+We're very interested in alternatives to general mutation, thanks for ideas!
+
+Will provide runtimes (JavaScript ok, GCC bad, but we ran/built mutants in inefficiently).
 
 R3:
 
