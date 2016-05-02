@@ -30,7 +30,7 @@ Sampling hurts localization, maybe mostly ok for taming (we're investigating mor
 
 We're very interested in alternatives to general mutation, thanks for ideas!
 
-Will provide runtimes (JavaScript ok, GCC bad, but we ran/built mutants in inefficiently).
+Will provide runtimes (JavaScript ok, GCC bad, but we ran/built mutants inefficiently).
 
 R3:
 
