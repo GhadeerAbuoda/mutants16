@@ -38,7 +38,7 @@ Anything such that the test oracle passes is allowed.  For a very weak oracle, y
 
 Q: ...don’t quite understand... evaluation results...
 
-Figure 2 shows _only_ fuzzer taming results, Tables 1-2 are _only_ for localization results.  These are two different goals, and evaluated separately.  FPF value only in Tables to show that how well a fault localizes and how well it is identified seem (surprisingly) unrelated.
+Figure 2 shows _only_ fuzzer taming results, Tables 1-2 are _only_ for localization results.  These are _different_ goals, both using the metric.  FPF value only in Tables to show that how well a fault localizes and how well it is identified seem (surprisingly) unrelated.
 
 Q: ...role of passing tests is "lower" than that of failing tests?
 
