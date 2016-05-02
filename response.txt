@@ -12,7 +12,7 @@ Q: ...all bugs... due to... optimizations. Is this correct? ...do these... the m
 
 3) Section 1.2: “if two failures.., baseline probability*. What does this mean?
 
-(Baseline) B = chance two failing tests are due to same fault.  Knowing two failures are "fixed" by turning off same optimization indicates probability they are same fault is > B.  We quantify (for our subjects) how much this holds (though not for optimizations alone).
+(Baseline) B = chance two failing tests are due to same fault.  Knowing two failures are "fixed" by turning off same optimization indicates probability they are same fault is > B.  We quantify (for our subjects) how much this holds (just not for optimizations alone).
 
 R2:
 
@@ -34,7 +34,7 @@ Will provide runtimes (JavaScript ok, GCC bad, but we ran/built inefficiently).
 
 R3:
 
-TACAS04 uses a _very_ different metric, in a very different way, we believe.
+TACAS04 uses a completely different metric, in a very different way, we believe.
 
 Q: ...what kind of changes... ...insert System.exit(0)...?
 
