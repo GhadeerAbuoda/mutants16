@@ -12,7 +12,7 @@ Q: ...all bugs... due to... optimizations. Is this correct? ...do these... the m
 
 3) Section 1.2: “if two failures.., baseline probability*. What does this mean?
 
-(Baseline) B = chance two failing tests are due to same fault.  Knowing two failures are "fixed" by turning off same optimization indicates probability they are same fault is > B.  We quantify (for our subjects) how much this holds (just not for optimizations alone).
+(Baseline) B = chance _any_ two failing tests are due to same fault.  Knowing two failures are "fixed" by turning off same optimization indicates probability they are same fault is > B.  We quantify (for our subjects) how much this holds (just not for optimizations alone).
 
 R2:
 
@@ -54,4 +54,4 @@ Q: ...how to interpret... Figure 3...
 
 Q:  ...confirm that these 8 faults are correct...?
 
-For these 8 (and 16 GCC faults), we had a backpatch, based on commit data and comments, and tested it.  The other faults had such complex change history this was not feasible, making localization (not taming) evaluation impossible.  Backpatch sets were produced by colleagues, not us, before we began this work (so are not cherry-picked).
+For these 8 (and 16 GCC faults), we had a backpatch, based on commit data and comments, and tested it.  The other faults had such complex change history this was not feasible, making localization (not taming) evaluation impossible.  Backpatch sets were produced by colleagues, not us, before we began this work, to avoid bias.
