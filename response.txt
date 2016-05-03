@@ -2,31 +2,36 @@ We thank the reviewers for very helpful comments.
 
 R1:
 
-Q: ...do you observe a correlation between distinct test cases and distinct invariants?
 
-Even reduced test cases are hard to connect to invariants, tend to execute ~10-50K+ LOC (see https://github.com/agroce/mutants16/tree/master/tests).  There probably is a correlation, but it's hard to spot for compiler faults.  We'd definitely like to investigate further.
+...significant over PLDI 2013...
 
-Q: ...all bugs... due to... optimizations. Is this correct? ...do these... the majority of bugs...? ...results to change for non-compiler benchmarks?
+Using our samplings and top-N PLDI 13 results (non-ideal method, hence not in paper), results _are_ _statistically_ significant (know not what you meant, but worth noting).
 
-~90% of GCC faults detected by changing from -O0 to -O3, so seems to be the rule for GCC.  For SpiderMonkey, "optimization" hard to separate from odd JavaScript semantics, or attempts to speed up SpiderMonkey in general (not always traditional optimization).  Results of Qi et al. suggest many programs _can_ be "patched" by turning off a feature, at least; MUSEUM also suggests generalization plausible.
+Q: ...correlation between... test cases and... invariants?
 
-3) Section 1.2: “if two failures.., baseline probability*. What does this mean?
+Even reduced test cases are hard to connect to invariants, tend to execute ~10-50K+ LOC (https://github.com/agroce/mutants16/tree/master/tests).  Probably is a correlation, but it's hard to spot for compiler tests.  We'll definitely investigate further!
 
-(Baseline) B = chance _any_ two failing tests are due to same fault.  Knowing two failures are "fixed" by turning off same optimization indicates probability they are same fault is > B.  We quantify (for our subjects) how much this holds (just not for optimizations alone).
+Q: ...optimizations... majority of bugs...? ...non-compiler benchmarks?
+
+~90% of GCC faults detected by changing from -O0 to -O3, so seems to be the rule for GCC.  For SpiderMonkey, "optimization" hard to separate from odd JavaScript semantics, or attempts to speed up SpiderMonkey in general (not always traditional optimization).  Results of Qi et al. suggest many programs _can_ be "patched" by turning off a feature; MUSEUM results also suggest generalization plausible.
+
+3) ...baseline probability. What does this mean?
+
+(Baseline) B = chance _any_ two failing tests are due to same fault.  Knowing two failures are "fixed" by turning off same optimization indicates probability they are same fault is > B.  We quantify (in 4.1, 4.2) this claim (though not for optimizations alone).
 
 R2:
 
-Q: ...fault of the center... repairs many others? Will that fault be discovered?
+Q: ...center... repairs many others? Will that fault be discovered?
 
-Really depends on the overall structure (what repairs those other tests).
+Really depends on the overall structure (what repairs which other tests).
 
 Q: ...faults not discovered in the experiment...?
 
-No obvious patterns, but differences would be complex properties of C/JavaScript and GCC/SpiderMonkey.  We'll investigate further.
+No obvious patterns, but differences would be complex properties of C/JavaScript and GCC/SpiderMonkey.  We'll investigate further!
 
 Q: ...sampling does alter the results... undesirable happening in terms of the onion ring model.
 
-Sampling hurts localization, maybe ok for taming (we're investigating).  Our guess: localization is bad when nothing in the middle of the onion ring is left (could be small set), which taming can handle.
+Sampling hurts localization, maybe ok for taming (we're investigating).  Our guess: localization is bad when nothing in the middle of the onion ring is left (could be small set), which hurts taming less.
 
 We're very interested in alternatives to general mutation, thanks for ideas!
 
@@ -34,7 +39,7 @@ Will provide runtimes (JavaScript ok, GCC bad, but we ran/built inefficiently).
 
 R3:
 
-TACAS04 uses a completely different metric, in a very different way, we believe.
+TACAS04 is completely different metric, used very differently, we believe.
 
 Q: ...what kind of changes... ...insert System.exit(0)...?
 
@@ -42,11 +47,11 @@ Anything such that the test oracle passes is allowed.  For a very weak oracle, y
 
 Q: ...don’t quite understand... evaluation results...
 
-Figure 2 shows _only_ fuzzer taming results, Tables 1-2 are _only_ for localization results.  These are _different_ goals, both using the metric.  FPF value only in Tables to show that how well a fault localizes and how well it is identified seem (surprisingly) unrelated.
+Figure 2 shows _only_ fuzzer taming results, no localization; Tables show _only_  localization results.  These are _independent_ goals, using same metric.  FPF column only in Tables to show that how well a fault localizes and how well it is identified seem (surprisingly) unrelated.
 
 Q: ...role of passing tests... "lower" than... failing tests?
 
-We believe so: probably for fuzzer taming, possibly for localization (MUSEUM and other localizations agree).  Faulty code often executes in many passing tests; determining conditions for failure is difficult; thus more information _about faults_ in failures, in some sense: e.g., single failing test can show a fault exists, which all passing tests cannot!
+We believe so: probably for fuzzer taming, possibly for localization (MUSEUM and other localizations agree).  Faulty code often executes in many passing tests; determining conditions for failure is difficult; thus more information _about faults_ in failures, in some sense: e.g., single failing test can show a fault exists, which all passing tests cannot!  We use passing tests to prune mutants.
 
 Q: ...how to interpret... Figure 3...
 
