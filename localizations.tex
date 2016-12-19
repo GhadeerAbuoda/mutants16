@@ -105,7 +105,16 @@ This ranks a mutant $m$ (and associated statement) by the inverse of the distanc
 from $f$ to the most distant failng test also repaired by $m$, adding 1
 so that if $m$ only repairs failures at distance 0 $r$ is well defined
 (and maximal).
-If $m$ does not repair $f$, it is not ranked at all.
+If $m$ does not repair $f$, it is not ranked at all.  One possible
+advantage of this approach, unique to our knowledge, is that by
+ranking \emph{mutants} the localization offers developers not simply a
+ranked statement but a kind of ``explanation'' of the fault:  if this
+mutant were applied, the fault would not exhibit.  As Kochhar et
+al. show \cite{Kochhar}, a large majority (more than 85\%) of developers considered
+the ability of a localization tool to provide a \emph{rationale} or
+reason for a localization important.  A mutation plus the tests that
+stop failing when it is applied is a practical, concrete explanation
+of a fault localization.
 
 One important aspect of these approaches is that they 
 can provide qualitative information for debugging, known as an \emph{error

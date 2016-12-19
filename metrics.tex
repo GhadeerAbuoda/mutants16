@@ -8,10 +8,7 @@ by 100 mutants.  If these two test cases share 90 common repairing
 mutants, and disagree for 10, they have a Hamming
 distance of 20.  This makes them ``less similar'' than two test cases,
 $t_1'$ and $t_2'$, where $t_1'$ is repaired by 5 mutants, $t_2'$ is
-repaired by 5 mutants, and \emph{none of those mutants overlap.}   Hamming distance for the first pair of tests is twice as
-large, despite the fact we have no evidence $t_1'$ and
-$t_2'$ are due to the same fault, in contrast to strong evidence for
-$t_1$ and $t_2$.  A Jaccard distance, also used (as similarity) in some fault
+repaired by 5 mutants, and \emph{none of those mutants overlap.}   A Jaccard distance, also used (as similarity) in some fault
 localization algorithms \cite{Pinpoint}, is a better fit.  For bitvectors $u$ and $v$ of length $n$:
 %\vspace{-0.08in}
 \[d(u,v) = 
@@ -23,7 +20,11 @@ localization algorithms \cite{Pinpoint}, is a better fit.  For bitvectors $u$ an
 \]
 
 This metric, the portion of mismatches over bits that are 1 in either
-vector, matches our intuitions about the above comparisons.  It
+vector, matches our intuitions about the above comparisons\footnote{In Section \ref{conc} we discuss possible uses of $d$
+requiring comparison of both failing and passing test cases:  in this 
+case, we would use three-valued vectors, where 1 indicates a 
+failing property succeeds and -1 that a succeeding property 
+fails.}.  It
 essentially formalizes the intuition of the onion-ring model, where
 more matching repairs indicates a much higher probability two failures
 are due to the same fault, even if not all repairs match.
@@ -43,8 +44,3 @@ compared to more focused metrics in earlier work \cite{PLDI13}.
 Therefore, in order to evaluate the contribution of our repair-based
 metric we compare it, alone, to the previous best metrics.
 
-In Section \ref{conc} we briefly discuss possible uses of $d$
-requiring comparison of both failing and passing test cases. The only
-change required is to use three-valued vectors, where 1 indicates a
-failing property succeeds and -1 indicates a succeeding property
-fails.  
