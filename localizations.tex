@@ -105,28 +105,27 @@ This ranks a mutant $m$ (and associated statement) by the inverse of the distanc
 from $f$ to the most distant failng test also repaired by $m$, adding 1
 so that if $m$ only repairs failures at distance 0 $r$ is well defined
 (and maximal).
-If $m$ does not repair $f$, it is not ranked at all.  One possible
-advantage of this approach, unique to our knowledge, is that by
+If $m$ does not repair $f$, it is not ranked at all.  One advantage of
+this approach over some statistical methods is that by
 ranking \emph{mutants} the localization offers developers not simply a
-ranked statement but a kind of ``explanation'' of the fault:  if this
-mutant were applied, the fault would not exhibit.  As Kochhar et
+ranked statement but a kind of ``explanation'' \cite{GroceError} of the fault:  if \emph{this
+mutant} were applied, the fault would not exhibit.  As Kochhar et
 al. show \cite{Kochhar}, a large majority (more than 85\%) of developers considered
 the ability of a localization tool to provide a \emph{rationale} or
 reason for a localization important.  A mutation plus the tests that
 stop failing when it is applied is a practical, concrete explanation
-of a fault localization.
+of a fault localization.  Mutants that repair a failure provide insight 
+into the nature of the fault, and, we hypothesize, more information the 
+closer they are to the center of the onion-ring. 
 
-One important aspect of these approaches is that they 
-can provide qualitative information for debugging, known as an \emph{error
-  explanation} \cite{GroceError}, in addition to localization.  For any
+The coverage localization also provides a kind of explanation, though
+a less direct one.  For any
 interesting line of code in the coverage-change-based localization,
 the user can investigate a particular instance of the change,
 by selecting a single mutant and stepping through the execution of the
 failing test case in a debugger to the point of change.  The user can also
 browse through all mutants that produce this coverage change for the test
-case.  Mutants that repair a failure provide insight
-into the nature of the fault, and, we hypothesize, more information the
-closer they are to the center of the onion-ring.
+case.  
 
 Another advantage over many statistical approaches to
 localization is that our methods are not potentially confused in
