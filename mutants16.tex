@@ -4,7 +4,7 @@
 % Requires temporary version of sigplanconf style file provided on
 % PLDI'16 web site.
 % 
-\documentclass{sig-alternate-05-2015}
+\documentclass[format=sigconf]{acmart}
 % \documentclass[pldi-cameraready]{sigplanconf-pldi16}
 
 %
@@ -25,9 +25,8 @@
 % known bug: http://tex.stackexchange.com/questions/1522/pdfendlink-ended-up-in-different-nesting-level-than-pdfstartlink
 %\newcommand{\doi}[1]{doi:~\href{http://dx.doi.org/#1}{\Hurl{#1}}}   % print a hyperlinked DOI
 
-\numberofauthors{2}
+%\numberofauthors{2}
 
-\author{}
 %\alignauthor
 %Josie Holmes\\
 %       \affaddr{Department of Geography}\\
@@ -38,9 +37,33 @@
 %       \affaddr{Oregon State University}
 %}
 
+\setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+
+% DOI
+%\acmDOI{10.475/123_4}
+
+% ISBN
+%\acmISBN{123-4567-24-567/08/06}
+
+%Conference
+\acmConference[ISSTA'17]{International Symposium on Software Testing
+  and Analysis}{July 2017}{Santa Barbara, California, USA}
+\acmYear{2017}
+\copyrightyear{2017}
+
+
+
 \begin{document}
 
 \title{A Causal Distance Metric for Program Executions}
+
+\author{}
+\author{}
 
 %
 % any author declaration will be ignored  when using 'pldi' option (for double blind review)
@@ -51,8 +74,6 @@
 %\makebox{A University}  \\
 %\makebox{A Place, AS 12345}}
 %{\{person1,person2\}@cs.auniv.edu}
-
-\maketitle
 
 \begin{abstract}
 \input{abstract}
@@ -74,12 +95,11 @@
 \end{CCSXML}
 
 \ccsdesc[500]{Software and its engineering~Dynamic analysis}
-\ccsdesc[500]{Software and its engineering~Software testing and
-  debugging}
-
-\printccsdesc
+\ccsdesc[500]{Software and its engineering~Software testing and debugging}
 
 \keywords{mutants, distance metrics, fault identification/localization}
+
+\maketitle
 
 \input{introduction}
 \input{metrics}
