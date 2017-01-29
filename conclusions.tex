@@ -11,7 +11,21 @@ executions \cite{NearNeighbor,GroceError}.  By using program changes
 causes to determine distance, it is possible to improve on efforts
 to identify the set of faults in a large set of redundant failures
 \cite{PLDI13} and discover the source code locations of faults
-\cite{MUSE,multilingual}.
+\cite{MUSE,multilingual}.  For a set of more than 2,800 tests and more
+than 50 faults, over the Mozilla SpiderMonkey 1.6 JavaScript compiler and
+GCC 4.3.0, our methods improve fault identification (``fuzzer taming''), in a statistically significant way
+(with effect size of about 3\% improvement), over
+the \emph{best} (for each subject program) of over 16 metrics considered in previous work.
+Preliminary investigation also shows improvement (for a shared
+mutation testing budget) over previous mutant-based fault localization
+methods, for the same tests and a subset of 24 faults with known
+locations.  Our {\bf Repair} method, in particular, was the only
+localization approach to provide any perfect localizations of faults
+(it produced 3),
+and provided three times as many very-high-quality (ranking the fault
+in top 5 locations) localizations as the next best method
+\cite{multilingual}  --- 6 such localizations, compared to only 2.
+For GCC wrong-code faults, only our methods produced any very-high-quality fault localizations.
 
 As future work, we plan to apply the mutation-based metric to other
 fuzzer taming and fault localization problems.  The highly varying
@@ -19,10 +33,13 @@ results for even the best fault localization methods in our
 experiments demonstrate that further advances are required before
 compiler debugging can consistently be made less onerous through automated
 assistance.  One idea is to combine the metric approach and the ideas
-in MUSE and MUSEUM, in some way, to exploit passing tests and perhaps
-additional coverage information.
+in MUSE and MUSEUM, or other mutant-based localizations such as
+Metallaxis \cite{Metallaxis} in some way, to exploit passing tests and perhaps
+additional coverage information.  We would also be very interested to
+compare our localizations with the Metallaxis
+\cite{Metallaxis,Papadakis} approach.
 
-%We also plan to explore other applications of mutant-based metrics.
+We also plan to explore other applications of mutant-based metrics.
 Many software engineering techniques rely on measuring distance
 between program executions \cite{BallConcept,NearNeighbor}.  Not all
 of these concern only failing
@@ -32,7 +49,11 @@ effectiveness of seeded symbolic execution
 \cite{Zesti,PersonSeed,BugRedux}.  Mutation response is likely too
 expensive to use for this purpose without modification, but sampling
 mutants to refine distance when coarser metrics plateau
-may be practical.  Mutants may also be useful in determining
+may be practical.  Cost may be less of a concern when applying our
+metrics as a method for prioritizing or selecting regression tests,
+where the results can be repeatedly used in test suite execution,
+without recomputing distances based on every code change
+\cite{YooHarman}.  Our metrics may also be useful in determining
 execution peers \cite{Sumner2011}, for example to help operators of
 spacecraft find similar behaviors to telemetry downlinks in testbed
 history \cite{KlausRajeev,scriptstospecs}.
