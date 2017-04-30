@@ -4,7 +4,9 @@
 % Requires temporary version of sigplanconf style file provided on
 % PLDI'16 web site.
 % 
-\documentclass[format=sigconf]{acmart}
+%\documentclass[format=sigconf]{acmart}
+\documentclass[10pt,conference]{IEEEtran}
+
 % \documentclass[pldi-cameraready]{sigplanconf-pldi16}
 
 %
@@ -37,7 +39,7 @@
 %       \affaddr{Oregon State University}
 %}
 
-\setcopyright{rightsretained}
+%\setcopyright{rightsretained}
 %\setcopyright{usgov}
 %\setcopyright{usgovmixed}
 %\setcopyright{cagov}
@@ -51,16 +53,17 @@
 %\acmISBN{123-4567-24-567/08/06}
 
 %Conference
-\acmConference[ISSTA'17]{International Symposium on Software Testing
-  and Analysis}{July 2017}{Santa Barbara, California, USA}
-\acmYear{2017}
-\copyrightyear{2017}
+%\acmConference[ISSTA'17]{International Symposium on Software Testing
+ % and Analysis}{July 2017}{Santa Barbara, California, USA}
+%\acmYear{2017}
+%\copyrightyear{2017}
 
 
 
 \begin{document}
 
-\title{A Causal Distance Metric for Program Executions}
+\title{Causal Distance-Metric Based Assistance for Debugging After
+  Compiler Fuzzing}
 
 \author{}
 \author{}
@@ -75,31 +78,33 @@
 %\makebox{A Place, AS 12345}}
 %{\{person1,person2\}@cs.auniv.edu}
 
+%\begin{CCSXML}
+%<ccs2012>
+%<concept>
+%<concept_id>10011007.10010940.10010992.10010998.10011001</concept_id>
+%<concept_desc>Software and its engineering~Dynamic analysis</concept_desc>
+%<concept_significance>500</concept_significance>
+%</concept>
+%<concept>
+%<concept_id>10011007.10011074.10011099.10011102.10011103</concept_id>
+%<concept_desc>Software and its engineering~Software testing and debugging</concept_desc>
+%<concept_significance>500</concept_significance>
+%</concept>
+%</ccs2012>
+%\end{CCSXML}
+
+%\ccsdesc[500]{Software and its engineering~Dynamic analysis}
+%\ccsdesc[500]{Software and its engineering~Software testing and debugging}
+
+%\keywords{mutants, distance metrics, fault identification/localization}
+
+\maketitle
+
+
 \begin{abstract}
 \input{abstract}
 \end{abstract}
 
-\begin{CCSXML}
-<ccs2012>
-<concept>
-<concept_id>10011007.10010940.10010992.10010998.10011001</concept_id>
-<concept_desc>Software and its engineering~Dynamic analysis</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-<concept>
-<concept_id>10011007.10011074.10011099.10011102.10011103</concept_id>
-<concept_desc>Software and its engineering~Software testing and debugging</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-</ccs2012>
-\end{CCSXML}
-
-\ccsdesc[500]{Software and its engineering~Dynamic analysis}
-\ccsdesc[500]{Software and its engineering~Software testing and debugging}
-
-\keywords{mutants, distance metrics, fault identification/localization}
-
-\maketitle
 
 \input{introduction}
 \input{metrics}

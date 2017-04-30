@@ -63,9 +63,9 @@ In order to check our results statistically, we sliced the PLDI 13 tests into 20
 
 \subsubsection{Fault Localization}
 
-Table \ref{jstable} shows a comparison of three fault localization methods for the SpiderMonkey faults.  The first column shows, for each fault, identified by the commit number of the code change that first ``fixed'' the failing tests associated with the fault, its FPF ranking: this is \emph{not} a fault localization ranking, just a way to see that the localization success seems to be somewhat independent of the ease of distinguishing the failures for a fault.  The next four columns show localization rankings.  A dash for a column means that localization did not rank any faulty statements, or assigned all faulty statements suspiciousness of 0.0.  The four rankings are: the {\bf Coverage} localization, the {\bf Repair} localization, the MUSE \cite{MUSE} localization, and the MUSEUM \cite{multilingual} localization, which uses the same formula as MUSE, but works better for multiple faults because it uses only one failure.  The MUSE/MUSEUM formulas normally make use of information from passing tests as well: when mutating a statement makes a passing test case fail, it makes the statement \emph{less} suspicious, by a weighted amount. The weight assigned to information from passing tests in our setting would likely be low (due to the ratios of repairs to mutation kills).  In a limited sense, information from passing tests is already incorporated in our results.  Throwing out all mutants that are killed by any passing test as potential repairs/localizations ensures that the rankings of all statements that are in MUSE/MUSEUM rankings are correct, relative to each other.  By definition, passing tests have no influence on the suspiciousness of these mutants.  However, there may be other mutants that 1) repair a failure and 2) are killed by some test case: these could, if enough repaired a faulty statement, improve MUSE/MUSEUM results.  We reject such mutants in part to keep costs low, and in part because we think that the causal information contained in such mutants, that repair a failure but also break some passing test, is problematic.  They seem likely to be less useful as explanations of the causes of a failure, since they do not impact the program semantics in a way that is only known to be beneficial, and could potentially even mislead a user if used as explanations.
+Table \ref{jstable} shows a comparison of three fault localization methods for the SpiderMonkey faults.  The first column shows, for each fault, identified by the commit number of the code change that first ``fixed'' the failing tests associated with the fault, its FPF ranking: this is \emph{not} a fault localization ranking, just a way to see that the localization success seems to be somewhat independent of the ease of distinguishing the failures for a fault.  The next four columns show localization rankings.  A dash for a column means that localization did not rank any faulty statements, or assigned all faulty statements suspiciousness of 0.0.  The four rankings are: the {\bf Coverage} localization, the {\bf Repair} localization, the MUSE \cite{MUSE} localization, and the MUSEUM \cite{multilingual} localization, which uses the same formula as MUSE, but works better for multiple faults because it uses only one failure.  The MUSE/MUSEUM formulas normally make use of information from passing tests as well: when mutating a statement makes a passing test case fail, it makes the statement \emph{less} suspicious, by a weighted amount. The weight assigned to information from passing tests in our setting would likely be low (due to the ratios of repairs to mutation kills).  In a limited sense, information from passing tests is already incorporated in our results.  Throwing out all mutants that are killed by any passing test as potential repairs/localizations ensures that the rankings of all statements that are in MUSE/MUSEUM rankings are correct, \emph{relative to each other}.  By definition, passing tests have no influence on the suspiciousness of these mutants.  However, there may be other mutants that 1) repair a failure and 2) are killed by some test case: these could, if enough different ones repaired the same faulty statement, improve MUSE/MUSEUM results, though in practice this is extremely unlikely.  We reject such mutants in part to keep costs low, and in part because we think that the causal information contained in such mutants, that repair a failure but also break some passing test, is problematic.  They seem likely to be less useful as explanations of the causes of a failure, since they do not impact the program semantics in a way that is only known to be beneficial, and could potentially even mislead a user if used as explanations.  Still, it is most useful to compare MUSEUM/MUSE and our approach on the cases where all methods produce a localization.
 
-Discussion with the MUSE/MUSEUM authors confirms  that adding information for passing tests, while costly, would likely improve the MUSE and MUSEUM results, given the weakness of our oracles, particularly for SpiderMonkey, and should be considered essential for ideal application of their approach.  Because the cost of recording the full mutant analysis matrix for all passing tests (rather than considering a mutant killed as soon as one test fails, as we do) is very high, and we would like to produce a comparison over a fixed computational cost, we give results for MUSE/MUSEUM over failing tests only, cautioning that we are not sure what the impact of this choice is.  For similar reasons of keeping costs low, we also used the mutation operators of Andrews vs. the more extensive Proteum \cite{Proteum} operators used in MUSE/MUSEUM's evaluations.  Even with these restrictions, running all mutants on passing tests took about 3 times as long as the search for repairs, which we already consider a potentially problematic cost.
+Discussion with the MUSE/MUSEUM authors confirms  that adding information for passing tests, while costly, would likely improve the MUSE and MUSEUM results, given the weakness of our oracles, particularly for SpiderMonkey, and should be considered essential for ideal application of their approach.  Because the cost of recording the full mutant analysis matrix for all passing tests (rather than considering a mutant killed as soon as one test fails, as we do) is very high, and we would like to produce a comparison over a fixed computational cost, we give results for MUSE/MUSEUM over failing tests only, cautioning that we are not sure what the impact of this choice is on faults that were not localized.  For similar reasons of keeping costs low, we also used the mutation operators of Andrews vs. the more extensive Proteum \cite{Proteum} operators used in MUSE/MUSEUM's evaluations.  Even with these restrictions, running all mutants on passing tests took about 3 times as long as the search for repairs, which we already consider a potentially problematic cost.
 
 Results are reported as absolute ranks, rather than more sophisticated \cite{MUSE} localization evaluations because our localizations do not assign suspiciousness scores, only rankings, and in accord with the proposal of Parnin and Orso that only localizations ranking a fault in the top few statements may be useful to users \cite{AutoHelp}.  We expect users to examine coverage changes and mutants.  Blind, unaided pointers to portions of compiler code without more semantic information about why the statement is suspicious seem unlikely to work well, based on our experience with complex compiler faults, and the results of Parnin and Orso \cite{AutoHelp}.
 
@@ -94,57 +94,61 @@ Fault & FPF & Coverage & Repair & MUSE & MUSEUM \\
 \label{jstable}
 \end{table}
 
-\begin{comment}
-\begin{figure}
-{\scriptsize
-\begin{code}
-{\bf Diff of old ($<$) vs new ($>$) for 115 patch (portion):}
-...
-<             vp[1] = OBJECT\_TO\_JSVAL(thisp);
-<         \} else \{
-<             ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);
-<         \}
-...
-<                   a->avail = (jsuword)sp;
-<               \}
-...
----
->         RESTORE\_SP(fp);
-...
-{\bf Mutant information:}
-Failure repaired by 148 mutants.
-...
-\#3: delete statement mutant of jsinterp.c:944:
-
-            vp[1] = OBJECT\_TO\_JSVAL(thisp);
-        \} else \{
-/*MUTANT    ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);*/
-        \}
-
-{\bf Coverage change information:}
-...
-\#6: 5 mutants (3.38\% of repairs) added jsinterp.c:992:
-                   a->avail = (jsuword)sp; /* ADDED */
-\end{code}
-}
-\caption{Patch and explanation for fault 115}
-%\vspace{-0.18in}
-\label{fig:explain}
-\end{figure}
-\end{comment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{comment}                                               %
+% \begin{figure}                                                %
+% {\scriptsize                                                  %
+% \begin{code}                                                  %
+% {\bf Diff of old ($<$) vs new ($>$) for 115 patch (portion):} %
+% ...                                                           %
+% <             vp[1] = OBJECT\_TO\_JSVAL(thisp);               %
+% <         \} else \{                                          %
+% <             ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);    %
+% <         \}                                                  %
+% ...                                                           %
+% <                   a->avail = (jsuword)sp;                   %
+% <               \}                                            %
+% ...                                                           %
+% ---                                                           %
+% >         RESTORE\_SP(fp);                                    %
+% ...                                                           %
+% {\bf Mutant information:}                                     %
+% Failure repaired by 148 mutants.                              %
+% ...                                                           %
+% \#3: delete statement mutant of jsinterp.c:944:               %
+%                                                               %
+%             vp[1] = OBJECT\_TO\_JSVAL(thisp);                 %
+%         \} else \{                                            %
+% /*MUTANT    ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);*/    %
+%         \}                                                    %
+%                                                               %
+% {\bf Coverage change information:}                            %
+% ...                                                           %
+% \#6: 5 mutants (3.38\% of repairs) added jsinterp.c:992:      %
+%                    a->avail = (jsuword)sp; /* ADDED */        %
+% \end{code}                                                    %
+% }                                                             %
+% \caption{Patch and explanation for fault 115}                 %
+% %\vspace{-0.18in}                                             %
+% \label{fig:explain}                                           %
+% \end{figure}                                                  %
+% \end{comment}                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The first thing to note about results is that Table \ref{jstable} only includes 8 of the 28 SpiderMonkey faults.  This is due to a problem discussed in the paper introducing this data set:  producing ground truth patches for a large application, in the sense of finding a minimal, clearly fault-fixing code change that can be back-ported to the original code is difficult \cite{PLDI13}.  While we believe the 28 faults identified in the PLDI 2013 data set are correct, it is very difficult to produce a valid patch of version 1.6 that captures the fix for most of these faults.  In some cases the final commit that caused tests to stop failing appeared to only be the end of a complex series of changes that converged on a correct fix.  In other cases, the code was modified so extensively before the fix that identifying ``the incorrect part'' of the original code seemed to owe more to guesswork than certainty.  The evaluation of localization therefore only examines the 8 faults for which we could be reasonably certain that the patch to 1.6 was correct and characterized the fault in question accurately.  The smallest patch required modification of two statements, and was thus larger than any mutants applied.  In no case was the patch equivalent to one of the mutants.
 
 No method performs extremely well --- for half the faults, no methods produced what we consider a useful localization.   Compiler faults are hard to debug, and any help is useful, but it seems unlikely developers will really benefit from a localization when it does not rank at least one faulty statement in the first 20 to 30 statements.  By this measure, MUSE only provides a helpful localization once, and performs worst of the methods.  {\bf Coverage} performs very badly for three faults, does not manage to be useful by our definition for another, and in the remaining two cases provides a good localization, in one case the best.  {\bf Repair} and MUSEUM both perform well, with {\bf Repair} slightly better.
 
-\begin{comment}
-\subsubsection{Error Explanation}
-
-
-Figure \ref{fig:explain} shows part of the patch for SpiderMonkey fault 115, and the {\bf Coverage} and {\bf Repair} outputs that successfully localize the fault (the 6th coverage change output, and the 3rd mutant output), to give some idea of the information our methods present.  For {\bf Coverage}, it is surprising that the sixth highest ranked change only appeared in 5 of 148 repairs. This change ranked high out of thousands of changes because it was unusual, appearing for only 10 repairs in the entire SpiderMonkey analysis. 
-
-The precise form an explanation based on our techniques should take is not clear.  One possibility, suggested by the results here, is a method focused on repairs, but using common coverage changes.  For each repairing mutant, in rank order, the highest ranking coverage changes for that mutant could also be shown, to give an idea of unusual (and potentially localizing) changes induced by repair.
-\end{comment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{comment}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        %
+% \subsubsection{Error Explanation}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      %
+%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        %
+%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        %
+% Figure \ref{fig:explain} shows part of the patch for SpiderMonkey fault 115, and the {\bf Coverage} and {\bf Repair} outputs that successfully localize the fault (the 6th coverage change output, and the 3rd mutant output), to give some idea of the information our methods present.  For {\bf Coverage}, it is surprising that the sixth highest ranked change only appeared in 5 of 148 repairs. This change ranked high out of thousands of changes because it was unusual, appearing for only 10 repairs in the entire SpiderMonkey analysis.  %
+%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        %
+% The precise form an explanation based on our techniques should take is not clear.  One possibility, suggested by the results here, is a method focused on repairs, but using common coverage changes.  For each repairing mutant, in rank order, the highest ranking coverage changes for that mutant could also be shown, to give an idea of unusual (and potentially localizing) changes induced by repair.                                                                                                                                          %
+% \end{comment}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \subsection{GCC 4.3.0 Wrong Code Results}
@@ -218,9 +222,6 @@ Finally, in contrast to many previously reported results in fault localization, 
 \subsubsection{Mutation Analysis Costs}
 
 Mutation analysis is not cheap.  The experiments in this paper were run over a long period of time.  However, there are numerous ways to reduce costs.  First, the primary cost is compiling the mutated versions of the SUT.  Running each test case under each mutated version of the compiler is cheap: each execution requires around 0.05 seconds for SpiderMonkey, and 0.12 seconds for GCC, on average; moreover, executions can be done in parallel, most failures do not cover most mutants, and vice versa, so the total number of repair checks needed is far less than the product of mutants and failures, and can be spread over many machines.  The practical approach to fuzzer taming for a large, ongoing project is likely to maintain a set of ``hot'' pre-compiled mutants.  These can be pruned at will by running them on passing test cases, and removing mutants that fail on any test case.  
-\begin{comment}
-Keeping hot mutants for a heavily modified program could be costly (since each mutant must be recompiled, if not re-tested, for each modification to the code), but for stable releases this is a simple approach to keep costs low.
-\end{comment}
 
 Second, and most critically, most program mutants never need to be considered as repairs, because we only consider mutants that cause no passing test case to fail.  MUSE and MUSEUM use kills by passing tests to help rank such tests as repairs, which is finer grained but more expensive.  As we show, MUSE and MUSEUM \emph{can}  be used without passing tests or these mutants, and MUSEUM still produces good results even with a weak oracle and few operators.  MUSE, MUSEUM, and our approach all run analysis without coverage instrumentation; we re-run repaired tests under gcov when using the {\bf Coverage} localization.
 
