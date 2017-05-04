@@ -118,6 +118,14 @@ of a fault localization.  Mutants that repair a failure provide insight
 into the nature of the fault, and, we hypothesize, more information the 
 closer they are to the center of the onion-ring. 
 
+In general, we expect {\tt Repair} to be used in the context of
+compiler (or other complex system) fuzzing, where there are numerous
+failing tests, likely from multiple faults.  In such cases, the $f$ to
+be localized is presumably selected by FPF.  However, in case our
+localization approach is used in a setting where single faults are
+expected, we propose an alternative method: let $f$ be an arbitrary test
+test with as few repairing mutants as possible. 
+
 The coverage localization also provides a kind of explanation, though
 a less direct one.  For any
 interesting line of code in the coverage-change-based localization,
