@@ -1,15 +1,15 @@
 \section{Conclusions and Future Work}
 \label{conc}
-
+\comment{
 When are two failing test cases due to the same fault?  This paper
 demonstrates that
 ``when they are repaired by the same program mutants'' is a useful answer to
 this question.  The problem of causality in executions is hard, and
 has long been tied to a notion of similarity of
-executions \cite{NearNeighbor,GroceError}.  By using program changes
+executions \cite{NearNeighbor,GroceError}. } By using program changes
 (produced by mutants) as
 causes to determine distance, it is possible to improve on efforts
-to identify the set of faults in a large set of redundant failures
+to identify the set of faults in a large set of redundant compiler failures
 \cite{PLDI13} and discover the source code locations of faults
 \cite{MUSE,multilingual}.  For a set of more than 2,800 tests and more
 than 50 faults, over the Mozilla SpiderMonkey 1.6 JavaScript compiler and
@@ -32,12 +32,13 @@ fuzzer taming and fault localization problems.  The highly varying
 results for even the best fault localization methods in our
 experiments demonstrate that further advances are required before
 compiler debugging can consistently be made less onerous through automated
-assistance.  One idea is to combine the metric approach and the ideas
+assistance.  \comment{One idea is to combine the metric approach and fall
+the ideas
 in MUSE and MUSEUM, or other mutant-based localizations such as
 Metallaxis \cite{Metallaxis} in some way, to exploit passing tests and perhaps
 additional coverage information.  We would also be very interested to
 compare our localizations with the Metallaxis
-\cite{Metallaxis,Papadakis} approach.
+\cite{Metallaxis,Papadakis} approach.}
 
 We also plan to explore other applications of mutant-based metrics.
 Many software engineering techniques rely on measuring distance
