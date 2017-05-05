@@ -1,0 +1,54 @@
+\subsection{Repair Localization for Non-Compiler Faults}
+
+The {\bf Repair} localization was designed for use in compiler (or at least complex system software) fuzzing.  It is not proposed (or at least, not here evaluated) as a general-purpose fault localization method.  However, it is possible to compare {\bf Repair} with other methods, using their full mutation and experimental set, to provide a more apples-to-apples comparison than the evaluation vs. MUSE and MUSEUM over compiler faults.  We obtained the data from two evaluations of mutant-based fault localization methods:  the set of faults used to evaluate MUSEUM \cite{multilingual}, and a set of CoreBENCH \cite{CoreBENCH} faults used in an evaluation of MUSE and Metallaxis-FL by Chekal et. al \cite{Papadakis} (we were unable to obtain the original MUSE dataset, thus far).  These data sets are not ideal for evaluating {\bf Repair}: for all but 10 of the faults (all from the CoreBENCH set) there is only a single failing test case in the data.  {\bf Repair} for single failing tests is essentially MUSEUM without use of passing tests, except to reject any mutation that breaks a passing test.  {\bf Repair} is meant to operate in the case where a program either has numerous failing tests associated with open bugs (e.g., a typical production compiler or complex system software program) or where a program has just been fuzzed for the first time, so has numerous failures representing different faults.  The distance metric lets {\bf Repair} make use of these other faults, by enabling it to focus on repairing mutants most relevant to the failing test.
+
+\subsubsection{MUSEUM Bug Results}  For the six faults used in the original MUSEUM paper (all with a single failing test), {\bf Repair} gives the same (perfect) localization for three faults.  One of the other three faults (Bug2) has no repairing mutants (that do not break some passing test) so {\bf Repair} provides no localization information at all.  For the remaining two faults, Bug5 and Bug6, {\bf Repair} gives best rankings of 12 and 9, respectively, compared to 8 and 3 for MUSEUM.
+
+\subsubsection{CoreBENCH Results} For the full data set in the paper \cite{Papadakis}, {\bf Repair} does not perform as well as MUSE and Metallaxis-FL, as expected.   It is only able to  rank a faulty line of code for 12 of 30 faults.  However, for these faults, it performs very well indeed, perfectly localizing 7 of the 12.  {\bf Repair} is uniquely best for 5 of the 12, and is tied for best for another 6; for the remaining fault, it performs better than Metallaxis-FL but worse than MUSE.  Table \ref{otherbugs} shows the results.  The fourth column shows, for those bugs where {\bf Repair} did not rank any faulty statement, how many statements {\bf Repair} proposed for a user to examine.  Note that in most cases if {\bf Repair} was not helpful it also provided little output to waste a user's time: it only once presented more than 3 statements to examine.   In practice, we only suggest using {\bf Repair} at all in cases where 1) there is at least one repairing mutant (not killed by any passing test) for a failing test and 2) there are multiple failing tests (whether from one or multiple faults).  When the Lines column shows a bold 0, it indicates there were no repairs.  The 7 faults meeting both requirements are bolded.  For 4 of these, {\bf Repair} produces a perfect localization, and for the other three, it produces no more than 2 non-faulty statements to examine.
+
+\begin{table}
+\centering
+{\scriptsize
+\begin{tabular}{|c|c||c|c||c|c|}
+\hline
+& \#Failing & & & & \\
+Fault & Tests & Repair & Lines & Metallaxis-FL & MUSE\\
+\hline
+{\bf Coreutils 1} & 2 & 1 & - & 1 & 1 \\
+Coreutils 2 & 3 & - &  {\bf 0} & 86 & 186 \\
+Coreutils 3 & 1 & 25 & - & 47 & 27 \\
+Coreutils 4 & 1 & - &  {\bf 0} & 28 & 431 \\
+{\bf Coreutils 5} & 5 & - &  2 & 4 & 7 \\
+Coreutils 6 & 1 & - &  1 & 5 & 206 \\
+Coreutils 7 & 1 & 1 & - & 5 & 9 \\
+Coreutils 8 & 1 & - &  1 & 22 & 160 \\
+{\bf Coreutils 9} & 5 & - &  1 & 10 & 157 \\
+Coreutils 11 & 1 & - &  1 & 2 & 1 \\
+Coreutils 12 & 2 & - & {\bf 0} & 6 & 9 \\
+Coreutils 13 & 1 & - & {\bf 0} & 905 & 833 \\
+Coreutils 14 & 1 & 14 & - & 19 & 11 \\
+{\bf Coreutils 15} & 2 & 1 & - & 1 & 6 \\
+Coreutils 16 & 1 & - & {\bf 0} & 569 & 447 \\
+{\bf Coreutils 17} & 3 & - &  2 & 37 & 195 \\
+Coreutils 18 & 1 & - &  3 & 27 & 3 \\
+Coreutils 19 & 1 & 1 & - & 3 & 1 \\
+{\bf Coreutils 20} & 7 & 1 & - & 12 & 3 \\
+Coreutils 21 & 2 & - & {\bf 0} & 20 & 191 \\
+{\bf Coreutils 22} & 2 & 1 & - & 6 & 2 \\
+Findutils 27 & 1 & - &  9 & 12 & 6 \\
+Findutils 32 & 1 & - &  1 & 73 & 70 \\
+Findutils 33 & 1 & - &  3 & 10 & 30 \\
+Findutils 35 & 1 & 1 & - & 1 & 1 \\
+Findutils 36 & 1 & 9 & - & 9 & 19 \\
+Findutils 37 & 1 & 11 & - & 22 & 34 \\
+Grep 46 & 1 & - &  2 & 7 & 10 \\
+Grep 47 & 1 & 4 & - & 4 & 4 \\
+Grep 48 & 1 & - & {\bf 0} & 26 & 497 \\
+
+\hline
+\end{tabular}
+}
+\caption{Fault localization for CoreBENCH faults}
+%\vspace{-0.2in}
+\label{otherbugs}
+\end{table}

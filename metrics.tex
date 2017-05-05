@@ -3,7 +3,9 @@
 For every failing test case, its response to mutants defines a bit-vector, with
 length equal to the number of mutants that repaired any test case,
 where a 1 bit indicates that the mutant in question repairs this test
-case.  These cannot be effectively compared with Hamming distance. Consider $t_1$ and $t_2$, both repaired
+case\footnote{By \emph{repairing} a failing test we mean that a mutant
+causes the test to pass, and the mutant does not cause
+other, previously passing tests, to fail.}.  These cannot be effectively compared with Hamming distance. Consider $t_1$ and $t_2$, both repaired
 by 100 mutants.  If these two test cases share 90 common repairing
 mutants, and disagree for 10, they have a Hamming
 distance of 20.  This makes them ``less similar'' than two test cases,
@@ -20,7 +22,7 @@ localization algorithms \cite{Pinpoint}, is a better fit.  For bitvectors $u$ an
 \]
 
 This metric, the portion of mismatches over bits that are 1 in either
-vector, matches our intuitions about the above comparisons\footnote{In Section \ref{conc} we discuss possible uses of $d$
+vector, matches our intuitions about the above comparisons\footnote{In Section \ref{conc} we discuss uses of $d$
 requiring comparison of both failing and passing test cases:  in this 
 case, we would use three-valued vectors, where 1 indicates a 
 failing property succeeds and -1 that a succeeding property 
