@@ -14,7 +14,7 @@ statistical and tend to simply provide an ordered list of statements
 to examine.  These statements are not guaranteed to be essentially
 related to the fault --- with many techniques, the statements are,
 too often, code that executes as a consequence of the fault, code
-accidentally executed with the fault, and so forth.  Second, most
+accidentally executed with the fault, and so forth.  We note that most
 evaluations of fault localization have been performed over programs
 where it is not clear that debugging is extremely hard, vs. the time
 spent applying automated localization and establishing effective
@@ -131,7 +131,8 @@ failing tests, likely from multiple faults.  In such cases, the $f$ to
 be localized is presumably selected by FPF.  However, in case our
 localization approach is used in a setting where single faults are
 expected, we propose an alternative method: let $f$ be an arbitrary
-test with as few repairing mutants as possible. 
+test with as few repairing mutants as possible, to allow the distance
+metric to focus attention on a few key mutants. 
 
 \comment{
 The coverage localization also provides a kind of explanation, though
