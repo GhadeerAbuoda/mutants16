@@ -1,0 +1,35 @@
+We would like to thank the anonymous reviewers for their helpful comments.
+
+R1:
+
+Will describe overhead.
+
+R2:
+
+It is hard to skip the hard-to-fix faults in a fix-and-rerun-tests process.  The process is that additional faults are only identified by the failure of the previous fixes to stop their tests failing.  In practice, people have to construct some kind of heuristic that prunes out instances of complex faults; for compiler faults this is often difficult, since there is no one language feature that IDs the problem, and leads to either over-pruning or under-pruning, even after effort.
+
+Using program repair is high on our list of future work.
+
+We believe our core approach does measure distances between two _executions_.  The core idea is that multiple mutants may "fix" (we don't measure how good the fix is, or how specific, except indirectly, in the "Repair" localization) a single failing test (an execution).  The more mutants in common two such tests have, the more similar they are.  This works even if there are just two failing tests.  Compute all mutants of P, and if the two failing tests still have the same pass/fail result for most mutants, they are very similar.  In the absence of other executions to compare to, it may be hard to interpret this distance, but e.g. if results are identical it is probably highly likely they are the same bug, and if they share no repairs, they are almost certainly different bugs.
+
+The confusion may arise from the Repair localization indeed looking for), the "best" repair per failing test:  but it does so using the execution distance metric.  So in that sense it is using the general metric on executions to evaluate mutants, not executions.
+
+Yes, R(f) is the set of mutants repairing test f, and F is the set of all failing tests.
+
+R3:
+
+As we noted to R2, in a sense ranking mutants is just a secondary effect of measuring the similarity of the executions.  Yes, we rank mutants for localization, but we have to compute the distances first (see the equation for r(m, f) on page 4, note it uses d(t, f).
+
+We'll see if we can shorten the intro or discussion to fit in some examples, we agree they would be very helpful (and were in an early draft, cut for space).
+
+Yes, mutants injected into target program, not tests.  Good point, will change PLDI 13.  We hadn't thought of this as a test prioritization algorithm, but you're right it can be used that way.  It can only be used (now) while the tests are failing, of course, which is a big limitation for that use, but in a single run of a fuzzer it can provide a meaningful prioritization to be stored for use in regression.  Perhaps the tests past the "knee" of the distance metric curve could be dropped?  Nice idea!
+
+R4:
+
+Will fix typo.
+
+R5:
+
+Will add definitions of R(f) and F.
+
+Will explain theoretical curve and fix the graphs.
