@@ -49,8 +49,8 @@ failures, faults, and repairing mutants,
 and therefore likely not related to any specific fault.
 
 \begin{quote}
-The {\bf Coverage} localization for a failing test case $f$ in the set
-of failures $F$ ranks
+The {\bf Coverage} localization for a failing test case $f \in F$ ($F$
+is the set of all failing test cases) ranks
 statements by the function $r$ (for rank) where:
 %$$U = s : \forall m . \forall t \in F . c(m,t,s) = 1$$
 $$C(s) = \sum_{t \in F} (\sum_{m \in R(t)} c(m,t,s))$$
@@ -88,11 +88,13 @@ ranked.  If it repairs even one very dissimilar failure, then it will
 be considered a poor localization.
 
 \begin{quote}
-The {\bf Repair} localization for a failing test case $f$ ranks
-statements by the function $r$ where:
+For a set $F$ of failing test cases and $m$ of mutants, 
+the {\bf Repair} localization for $f \in F$, where $R(f) \in m$ is the set
+of mutants repairing $f$, ranks
+statements by the function $r$:
 %$$dmax(m,f) = max_{t : m \in R(t)} d(t,f)$$
 \[
-r(m,f) = 
+r(f) = 
 \begin{cases}
 \frac{1}{1 + max_{t \in F: m \in R(t)} d(t,f)} & m \in R(f)\\
 0 & m \not\in R(f)\\
