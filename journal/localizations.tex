@@ -1,0 +1,153 @@
+\section{Localization and Explanation}
+
+Automated fault localization \cite{FaultSurvey,Jones2002} provides users with
+information about the likely location of a fault in a program's source
+code.  \comment{Error explanation \cite{GroceError} also provides information
+about the causal structure of a fault --- how it can be avoided, what
+triggers it --- a kind of ``fault story.''}  Parnin and Orso recently
+suggested that fault localization methods are not actually providing a
+great deal of assistance to real users in debugging \cite{AutoHelp}.
+Automated fault localization has not been widely adopted in industry.
+
+Parnin and Orso note that most popular methods are
+statistical and tend to simply provide an ordered list of statements
+to examine.  These statements are not guaranteed to be essentially
+related to the fault --- with many techniques, the statements are,
+too often, code that executes as a consequence of the fault, code
+accidentally executed with the fault, and so forth.  We note that most
+evaluations of fault localization have been performed over programs
+where it is not clear that debugging is extremely hard, vs. the time
+spent applying automated localization and establishing effective
+(automated) testing to support automated localization.  Compiler
+debugging, on the other hand, especially for subtle optimization-based
+problems that produce incorrect code (vs. simple crashes) is generally
+known to be difficult.
+Researchers reporting subtle compiler bugs often observe the time from
+reporting a fault to its correction, even once the fault is assigned,
+to be lengthy, and the resulting patches are sometimes thousands of
+lines \cite{PLDI13}.  Important compilers, whether JITs where security is paramount
+or C compilers used to compile core systems code, also tend to already
+be the
+subjects of extensive automated testing \cite{jsfunfuzz,csmith}.
+
+\comment{
+By definition, when a mutant repairs a test case, it changes the
+behavior of the test.  In some cases, this behavioral change is
+limited to changes in program state and data values.  However, the
+vast majority of mutant repairs also modify the code coverage of a
+test; in our experiments, there were no repairs that did not change
+coverage.  If a fault can be avoided by, for example, disabling a
+problematic optimization in a compiler, this naturally leads to
+changed coverage.  If the fault is due to a bad conditional, where a
+program path should include additional code, the repair will often
+change the execution to include the omitted code.  As a localization
+for a fault, then, we can examine the source statements whose
+  coverage changed most often in repairs.  Early experiments with this
+  approach showed that a useful coverage change localization must  account for the frequency of a
+change.  Some coverage changes are extremely common across all
+failures, faults, and repairing mutants,
+and therefore likely not related to any specific fault.
+
+\begin{quote}
+The {\bf Coverage} localization for a failing test case $f \in F$ ($F$
+is the set of all failing test cases) ranks
+statements by the function $r$ (for rank) where:
+%$$U = s : \forall m . \forall t \in F . c(m,t,s) = 1$$
+$$C(s) = \sum_{t \in F} (\sum_{m \in R(t)} c(m,t,s))$$
+%\[
+$$r(s,f) = \sum_{m \in R(f)}\frac{1}{C(s)}c(m,f,s)$$
+%\begin{cases}
+% \sum_{m \in R(f)}\frac{1}{C(s)}c(m,f,s) & s \not\in U\\
+%   0 & s \in U
+%\end{cases}
+%\]
+$c(m,t,s)$ is 1 if coverage of $s$ changes for test $t$
+with mutant $m$, and 0 otherwise.  $R(f)$ is the set of mutants repairing $f$.
+\end{quote}
+
+That is, the ranking is based on the number of times a statement's
+coverage changes its value (covered or not covered) from the original
+execution of $f$ in executions of mutants that repair $f$.  Changes are weighted by their inverse frequency over all
+failures and all mutants.
+Higher values for $r$ result in a higher ranking (more likely to
+be faulty).  
+%Computing $U$ accounts for the fact that in our
+%experiments, a few statements were added or removed for every single
+%r
+}
+Repairing mutants can be used for localization and
+explanation.  While few will be equivalent to actual fixes, they
+will sometimes overlap the incorrect code, and will often be closely
+related to incorrect code, semantically.  Since some tests are
+repaired by a large number of mutants, it is important to rank the
+mutants to produce a localization.  Based on the onion-ring model proposed above, this is simple: each mutant is ranked as
+a localization/explanation based on the \emph{most distant failure it also
+  repairs.}  If a given mutant only repairs failures that have similar
+repair vectors to the test case being localized, it will be highly
+ranked.  If it repairs even one very dissimilar failure, then it will
+be considered a poor localization.
+
+\begin{quote}
+For a set $F$ of failing test cases and $m$ of mutants, 
+the {\bf Repair} localization for $f \in F$, where $R(f) \in m$ is the set
+of mutants repairing $f$, ranks
+statements by the function $r$:
+%$$dmax(m,f) = max_{t : m \in R(t)} d(t,f)$$
+\[
+r(f) = 
+\begin{cases}
+\frac{1}{1 + max_{t \in F: m \in R(t)} d(t,f)} & m \in R(f)\\
+0 & m \not\in R(f)\\
+\end{cases}
+\]
+%$$\text{leastfar} = m \in R(f) : \neg\exists m' : \text{far}(m',f) <
+%\text{far}(m,f)$$
+\end{quote}
+
+This ranks a mutant $m$ (and associated statement) by the inverse of the distance
+from $f$ to the most distant failing test also repaired by $m$, adding 1
+so that if $m$ only repairs failures at distance 0 $r$ is well defined
+(and maximal).
+If $m$ does not repair $f$, it is not ranked at all.  One advantage of
+this approach over some statistical methods is that by
+ranking \emph{mutants} the localization offers developers not simply a
+ranked statement but a kind of ``explanation'' \cite{GroceError} of the fault:  if \emph{this
+mutant} were applied, the fault would not exhibit.  As Kochhar et
+al. show \cite{Kochhar}, a large majority (more than 85\%) of developers considered
+the ability of a localization tool to provide a \emph{rationale} or
+reason for a localization important.  A mutation plus the tests that
+stop failing when it is applied is a practical, concrete explanation
+of a fault localization.  Mutants that repair a failure provide insight 
+into the nature of the fault, and, we hypothesize, more information the 
+closer they are to the center of the onion-ring. 
+
+An advantage of this method over some statistical approaches to
+localization is that it is not potentially confused in
+settings with multiple faults.  Each localization/explanation is based
+on a single failing test case, which in most cases fails due to only one
+fault.  In fact, other faults (and their failures) theoretically \emph{help} {\bf Repair} rank the mutants.
+
+In general, we expect {\bf Repair} to be used in the context of
+compiler (or other complex system) fuzzing, where there are numerous
+failing tests, likely from multiple faults.  In such cases, the $f$ to
+be localized is presumably selected by FPF.  However, in case our
+localization approach is used in a setting where single faults are
+expected, we propose an alternative method: let $f$ be an arbitrary
+test with as few repairing mutants as possible, to allow the distance
+metric to focus attention on a few key mutants. 
+
+\comment{
+The coverage localization also provides a kind of explanation, though
+a less direct one.  For any
+interesting line of code in the coverage-change-based localization,
+the user can investigate a particular instance of the change,
+by selecting a single mutant and stepping through the execution of the
+failing test case in a debugger to the point of change.  The user can also
+browse through all mutants that produce this coverage change for the test
+case.
+
+Another advantage over many statistical approaches to
+localization is that our methods are not potentially confused in
+settings with multiple faults.  Each localization/explanation is based
+on a single failing test case, which in most cases fails due to only one
+fault.  In fact, other faults help both methods rank localizations.}

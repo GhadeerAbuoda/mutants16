@@ -1,0 +1,59 @@
+\section{A Mutant-Based Distance Metric}
+
+For every failing test case, its response to mutants defines a bit-vector, with
+length equal to the number of mutants that repaired any test case,
+where a 1 bit indicates that the mutant in question repairs this test
+case\footnote{By \emph{repairing} a failing test we here mean that a mutant
+causes the test to pass, \emph{and} the mutant does not cause
+other, previously passing tests, to fail.}.  These cannot be effectively compared with Hamming distance. Consider $t_1$ and $t_2$, both repaired
+by 100 mutants.  If these two test cases share 90 common repairing
+mutants, and disagree for 10, they have a Hamming
+distance of 20.  This makes them ``less similar'' than two test cases,
+$t_1'$ and $t_2'$, where $t_1'$ is repaired by 5 mutants, $t_2'$ is
+repaired by 5 mutants, and \emph{none of those mutants overlap.}   A Jaccard distance, also used (as similarity) in some fault
+localization algorithms \cite{Pinpoint}, is a better fit.  For bitvectors $u$ and $v$ of length $n$:
+%\vspace{-0.08in}
+\[d(u,v) = 
+\begin{cases}
+\frac{\sum_{i=0}^{n-1} 1\ \text{if}\ u_i \neq v_i\ \text{else}\ 0}{\sum_{i=0}^{n-1} 1
+\  \text{if}\ u_i \neq 0 \vee v_i \neq 0\ \text{else}\ 0} & \exists i:u_i\neq 0 \vee v_i\neq 0\\
+0 & otherwise
+\end{cases}
+\]
+
+This metric, the portion of mismatches over bits that are 1 in either
+vector, matches our intuitions about the above comparisons.  It
+essentially formalizes the intuition of the onion-ring model, where
+more matching repairs indicates a much higher probability two failures
+are due to the same fault, even if not all repairs match.
+\comment{
+\footnote{In Section \ref{conc} we discuss uses of $d$
+requiring comparison of both failing and passing test cases:  in this 
+case, we would use three-valued vectors, where 1 indicates a 
+failing property succeeds and -1 that a succeeding property 
+fails.  For such an application, we could remove the requirement that
+a repair not be a killed mutant, since the passing test vectors would encode
+that information.}}
+
+Given such a metric, FPF \cite{Gonzalez} fuzzer taming \cite{PLDI13}
+begins by ranking as first an arbitrary test case.   FPF next ranks the test
+case, of all unranked tests, that has the largest minimum distance
+from all ranked test cases --- the test case most dissimilar by \emph{closest}
+already ranked test --- until all tests are ranked.  FPF is boundedly close
+to optimal under certain assumptions \cite{Gonzalez}.
+
+More complex metrics are possible, also combining information such as
+coverage and language features or test case tokens \cite{PLDI13}.
+However, mixtures of metrics (combining different features) other than
+Levenshteins \cite{lev} over test case + output never performed well
+compared to more focused metrics in earlier work \cite{PLDI13}.
+Therefore, in order to evaluate the contribution of our repair-based
+metric we compare it, alone, to the previous best metrics.
+
+In Section \ref{conc} we discuss uses of $d$
+requiring comparison of both failing and passing test cases:  in this 
+case, we would use three-valued vectors, with a bit for each \emph{property}, where 1 indicates a 
+failing property succeeds and -1 that a succeeding property 
+fails.  For such an application, we could remove the requirement that
+a repair not be a killed mutant, since the passing test vectors would encode
+that information
