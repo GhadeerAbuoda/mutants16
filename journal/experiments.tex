@@ -63,7 +63,15 @@ Over all mutants, and all pairs of test cases repaired by the same mutant (so th
 An additional measure of effectiveness is to consider how effective a metric is in producing matched nearest neighbors.  That is, how often is the nearest neighbor of a failure (that is not due to a singleton fault --- a fault detected by only one test case) due to the same fault?  For reduced \cite{DD,PLDI13,
 CReduce} test cases, we assume that for a perfect metric, the nearest neighbor should almost always share the same fault, since there is little or no extraneous semantic content to each test beyond the cause of failure.  For the SpiderMonkey failures, 96.3\% of non-singleton failures matched their nearest neighbor(s).  For mutants that repaired any failures, the mean and median number of test cases repaired were 120.6 and 4.0, respectively.  Most mutants repaired a small number of tests, but a few mutants repaired a very large number of tests.  A few mutants repaired \emph{all} SpiderMonkey faults; obviously these mutants were not actual fault fixes, but effectively disabled the mechanism {\tt jsfunfuzz} used to detect failure. The mean and median homogeneity for repairing mutants (\% of failures repaired corresponding to the most common fault repaired) were 77.96\% and 86.36\%, respectively.  
 
-In order to check our results statistically, we sliced the FPF benchmark tests into 20 randomly selected equal-sized (as much as possible) distinct subsets.  The repair metric had a mean APFD (89.23\%) for these subsets that was 2.85\% better than the mean APFD for the best benchmark metric (86.76\%), over sets of $\sim 10$ faults. The result was statistically significant ($p < 0.05$ by Wilcoxon test).   Median repair APFD was 90.05\%, vs. 84.75\% for the best benchmark metric.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\columnwidth]{comparejs}
+  \caption{APFD values for Spidermonkey suite slices}
+  \label{comparejs}
+\end{figure}%
+
+
+In order to check our results statistically, we sliced the FPF benchmark tests into 20 randomly selected equal-sized (as much as possible) distinct subsets (Figure \ref{comparejs}) .  The repair metric had a mean APFD (89.23\%) for these subsets that was 2.85\% better than the mean APFD for the best benchmark metric (86.76\%), over sets of $\sim 10$ faults. The result was statistically significant ($p < 0.05$ by Wilcoxon test).   Median repair APFD was 90.05\%, vs. 84.75\% for the best benchmark metric.
 
 
 \subsubsection{Fault Localization}
