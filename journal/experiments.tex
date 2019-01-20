@@ -45,16 +45,14 @@ Our mutants were produced using the tool written by Jamie Andrews \cite{mutant}.
 
 These data sets, though similar in that both compilers are written in C, provide some interesting variance for testing our metrics.  The oracle for SpiderMonkey executions is the set of checks built in to {\tt jsfunfuzz} plus the requirement that the execution not crash.  This is only a moderately strong oracle, and allows serious deviations from both the JavaScript language specification and normal SpiderMonkey behavior, while checking some complex details, such as {\tt eval} round-trips.  For GCC, the oracle is a differential check on a hash code:  failure was defined as producing a executable with the -O3 flag that, when executed, produced a different checksum than code compiled by either of GCC 4.9.3 or clang 7.0.0, both using -O0.  A repairing mutant must enable GCC 4.3.0 to actually compile code correctly, which is a very strict correctness property, making coincidental correctness \cite{CCT} highly unlikely --- only missed optimizations are allowed.
 
-We only show results for the first 50 tests in the ranking, and computed areas under curves for the same limit, since it seems very unlikely that a user will examine many more than 50 tests, especially given the decreasing slope of the discovery curves.  In practice, after 50 tests, fixing a few faults and then re-running tests and FPF seems the most likely recourse, and we confirmed that after removing random subsets of faults, our metrics still outperform the previous best.  We applied X-means \cite{xmeans} in an attempt to use clustering with our metrics, but, as with previous results \cite{PLDI13} it did not compare well with FPF, and the runtime was much higher.  We confirm the conclusion \cite{PLDI13} that clustering is of limited value in fuzzer taming.
-% (at least with X-means) does not work well in a setting with extreme disparity in instance counts for faults.  %A further difficulty for our setting is that X-means and most off-the-shelf clustering tools take vectors, not a distance metric.  X-means is using the raw repair data, not weighted by the fact that 0-0 agreement is much less informative than other possible matchings (a Euclidean over 0-1 vectors is just the square root of Hamming distance).
+We only show results for the first 50 tests in the ranking, and computed areas under curves for the same limit, since it seems very unlikely that a user will examine many more than 50 tests, especially given the decreasing slope of the discovery curves.  In practice, after 50 tests, fixing a few faults and then re-running tests and FPF seems the most likely recourse, and we confirmed that after removing random subsets of faults, our metrics still outperform the previous best.  We applied X-means \cite{xmeans} in an attempt to use clustering with our metrics, but, as with previous results \cite{PLDI13} it did not compare well with FPF, and the runtime was much higher.  We confirm the conclusion \cite{PLDI13} that clustering (at least with X-means) does not work well in a setting with extreme disparity in instance counts for faults.  A further difficulty for our setting is that X-means and most off-the-shelf clustering tools take vectors, not a distance metric.  X-means is using the raw repair data, not weighted by the fact that 0-0 agreement is much less informative than other possible matchings (a Euclidean over 0-1 vectors is just the square root of Hamming distance).
 
 \subsection{Mozilla SpiderMonkey 1.6 Results}
 
 
 There were 96,828 SpiderMonkey mutants, based on 69,634 lines of code in C and header files.  Of these mutants, 12,666 were covered by some failing test case.  Of these mutants, 10,525 survived a basic set of SpiderMonkey quick tests \cite{icst2014}.  Of these mutants, 1,326 (12.6\%) repaired at least one test case.  Figure \ref{jscurves} shows the discovery curves for the mutant repair metric compared to the ideal discovery curve and the best curve from previous work using FPF, which used a normalized Levenshtein distance \cite{lev} over the failure output and test case text \cite{PLDI13}.  A discovery curve is a plot of the number of distinct faults that a user, examining the tests in the ranked order, would have seen after N tests (here, N goes up to 50).
 
-The APFD (Average Percent Faults Detected) values in the graphs are based on the measure  introduced by Rothermel et al. for evaluating test case prioritization methods \cite{APFD}.  APFD is a somewhat better summary of results than the raw curve areas used for evaluation in previous work \cite{PLDI13}.  APFD, as the name suggests, measures the percent of all faults discovered at the ``average'' point on the curve, by comparing the curve's area to an ideal curve, with interpolation.  A simpler (but less informative) way to compare the curves is to note that the mutation-based metric's curve is above the best previous curve at 60\% of data points.
-%\footnote{The details of APFD calculation are slightly involved, and the interpolation and perfect curve are not exact fits for fuzzer taming; nonetheless the basic method summarizes curves fairly well and is standard in the testing literature for similar problems \cite{issta14}.}. 
+The APFD (Average Percent Faults Detected) values in the graphs are based on the measure  introduced by Rothermel et al. for evaluating test case prioritization methods \cite{APFD}.  APFD is a somewhat better summary of results than the raw curve areas used for evaluation in previous work \cite{PLDI13}.  APFD, as the name suggests, measures the percent of all faults discovered at the ``average'' point on the curve, by comparing the curve's area to an ideal curve, with interpolation.  A simpler (but less informative) way to compare the curves is to note that the mutation-based metric's curve is above the best previous curve at 60\% of data points\footnote{The details of APFD calculation are slightly involved, and the interpolation and perfect curve are not exact fits for fuzzer taming; nonetheless the basic method summarizes curves fairly well and is standard in the testing literature for similar problems \cite{issta14}.}. 
 
 APFD results are useful summaries, but the curve itself is also worth examining, since (1) long sequences of tests with no new faults may discourage users more than an overall less effective but steadily climbing curve with few ``plateaus'' as we call these uninformative sequences of tests and (2) a good early curve is important to developers.  The mutant repair curve climbs very rapidly in the early portion, with perfect discovery for the first 12 faults. The largest plateau is 5 tests without a new fault, ignoring the long period after the 31st test.  In fact, a plateau at the end of the curve is not problematic.  Assuming that few users will examine more than 50 test cases without fixing some faults, the user may give up after seeing 10 or more tests without a new fault based on the mutant repair curve, and in fact lose nothing by doing so.  The best FPF benchmark curve, in contrast, has a plateau of size 17 after the 17th fault.  If we assume a user stops examining tests after a size 10 or greater plateau, the user will only see 17 faults using the best benchmark metric, vs. 19 with our metric.  Stopping at a plateau of size 6 produces the same results.
 
@@ -80,9 +78,8 @@ Table \ref{bothtable} shows a comparison of three fault localization methods for
 
 Discussion with the MUSE/MUSEUM authors confirms  that adding information for passing tests, while costly, would likely improve the MUSE and MUSEUM results, given the weakness of our oracles, particularly for SpiderMonkey, and should be considered essential for ideal application of their approach.  Because the cost of recording the full mutant analysis matrix for all passing tests (rather than considering a mutant killed as soon as one test fails, as we do) is very high, and we would like to produce a comparison over a fixed computational cost, we give results for MUSE/MUSEUM over failing tests only, cautioning that we are not sure what the impact of this choice is on faults that were not localized.  For similar reasons of keeping costs low, we also used the mutation operators of Andrews vs. the more extensive Proteum \cite{Proteum} operators used in MUSE/MUSEUM's evaluations.  \comment{Even with these restrictions, running all mutants on passing tests until at least a single kill was observed took about 3 times as long as the search for repairs, which we already consider a potentially problematic cost.}  In Section \ref{sec:otherfaults} we provide some comparisons with MUSEUM and MUSE fault localization in the context of a full mutation result matrix using their preferred set of operators.
 
-\comment{
-Results are reported as absolute ranks, rather than more sophisticated \cite{MUSE} localization evaluations because our localizations do not assign suspiciousness scores, only rankings, and in accord with the proposal of Parnin and Orso that only localizations ranking a fault in the top few statements may be useful to users \cite{AutoHelp}.  We expect users to examine coverage changes and mutants.  Blind, unaided pointers to portions of compiler code without more semantic information about why the statement is suspicious seem unlikely to work well, based on our experience with complex compiler faults, and the results of Parnin and Orso \cite{AutoHelp}.
-}
+Results are reported as absolute ranks, rather than more sophisticated \cite{MUSE} localization evaluations because our localizations do not assign suspiciousness scores, only rankings, and in accord with the proposal of Parnin and Orso that only localizations ranking a fault in the top few statements may be useful to users \cite{AutoHelp}.  We expect users to examine the mutants and consider how they help avoid the fault.  Blind, unaided pointers to portions of compiler code without more semantic information about why the statement is suspicious seem unlikely to work well, based on our experience with complex compiler faults, and the results of Parnin and Orso \cite{AutoHelp}.
+
 
 \comment{
 \begin{table}
@@ -112,44 +109,40 @@ Fault & Repair & MUSE & MUSEUM \\
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \begin{comment}                                               %
-% \begin{figure}                                                %
-% {\scriptsize                                                  %
-% \begin{code}                                                  %
-% {\bf Diff of old ($<$) vs new ($>$) for 115 patch (portion):} %
-% ...                                                           %
-% <             vp[1] = OBJECT\_TO\_JSVAL(thisp);               %
-% <         \} else \{                                          %
-% <             ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);    %
-% <         \}                                                  %
-% ...                                                           %
-% <                   a->avail = (jsuword)sp;                   %
-% <               \}                                            %
-% ...                                                           %
-% ---                                                           %
-% >         RESTORE\_SP(fp);                                    %
-% ...                                                           %
-% {\bf Mutant information:}                                     %
-% Failure repaired by 148 mutants.                              %
-% ...                                                           %
-% \#3: delete statement mutant of jsinterp.c:944:               %
-%                                                               %
-%             vp[1] = OBJECT\_TO\_JSVAL(thisp);                 %
-%         \} else \{                                            %
-% /*MUTANT    ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);*/    %
-%         \}                                                    %
-%                                                               %
-% {\bf Coverage change information:}                            %
-% ...                                                           %
-% \#6: 5 mutants (3.38\% of repairs) added jsinterp.c:992:      %
-%                    a->avail = (jsuword)sp; /* ADDED */        %
-% \end{code}                                                    %
-% }                                                             %
-% \caption{Patch and explanation for fault 115}                 %
-% %\vspace{-0.18in}                                             %
-% \label{fig:explain}                                           %
-% \end{figure}                                                  %
-% \end{comment}                                                 %
+\begin{comment}                                               %
+\begin{figure}                                                %
+{\scriptsize                                                  %
+\begin{code}                                                  %
+{\bf Diff of old ($<$) vs new ($>$) for 115 patch (portion):} %
+...                                                           %
+<             vp[1] = OBJECT\_TO\_JSVAL(thisp);               %
+<         \} else \{                                          %
+<             ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);    %
+<         \}                                                  %
+...                                                           %
+<                   a->avail = (jsuword)sp;                   %
+<               \}                                            %
+...                                                           %
+---                                                           %
+>         RESTORE\_SP(fp);                                    %
+...                                                           %
+{\bf Mutant information:}                                     %
+Failure repaired by 148 mutants.                              %
+...                                                           %
+\#3: delete statement mutant of jsinterp.c:944:               %
+                                                              %
+            vp[1] = OBJECT\_TO\_JSVAL(thisp);                 %
+        \} else \{                                            %
+/*MUTANT    ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);*/    %
+        \}                                                    %
+                                                              %
+\end{code}                                                    %
+}                                                             %
+\caption{Patch and explanation for fault 115}                 %
+%\vspace{-0.18in}                                             %
+\label{fig:explain}                                           %
+\end{figure}                                                  %
+\end{comment}                                                 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Table \ref{bothtable} only includes 8 of the 28 SpiderMonkey faults.  This is due to a problem with the data set:  producing ground truth patches for a large application, in the sense of finding a minimal, clearly fault-fixing code change that can be back-ported to the original code is difficult \cite{PLDI13}.  While we believe the 28 faults identified in the FPF benchmark data are correct, it is very difficult to produce a valid patch of version 1.6 that captures the fix for most of these faults.  In some cases the final commit that caused tests to stop failing appeared to only be the end of a complex series of changes that converged on a correct fix.  In other cases, the code was modified so extensively before the fix that identifying ``the incorrect part'' of the original code seemed to owe more to guesswork than certainty.  The evaluation of localization therefore only examines the 8 faults for which we could be reasonably certain that the patch to 1.6 was correct and characterized the fault in question accurately.  In no case was the patch equivalent to one of the mutants (the smallest patch modified two statements).
@@ -161,10 +154,7 @@ No method performs extremely well --- for half the faults, no methods produced w
 % \subsubsection{Error Explanation}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      %
 %                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        %
 %                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        %
-% Figure \ref{fig:explain} shows part of the patch for SpiderMonkey fault 115, and the {\bf Coverage} and {\bf Repair} outputs that successfully localize the fault (the 6th coverage change output, and the 3rd mutant output), to give some idea of the information our methods present.  For {\bf Coverage}, it is surprising that the sixth highest ranked change only appeared in 5 of 148 repairs. This change ranked high out of thousands of changes because it was unusual, appearing for only 10 repairs in the entire SpiderMonkey analysis.  %
-%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        %
-% The precise form an explanation based on our techniques should take is not clear.  One possibility, suggested by the results here, is a method focused on repairs, but using common coverage changes.  For each repairing mutant, in rank order, the highest ranking coverage changes for that mutant could also be shown, to give an idea of unusual (and potentially localizing) changes induced by repair.                                                                                                                                          %
-% \end{comment}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          %
+ Figure \ref{fig:explain} shows part of the patch for SpiderMonkey fault 115, and the {\bf Repair} output that successfully localizes the fault (the 3rd mutant output), to give some idea of the information our method presents.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
