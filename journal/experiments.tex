@@ -109,7 +109,6 @@ Fault & Repair & MUSE & MUSEUM \\
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{comment}                                               %
 \begin{figure}                                                %
 {\scriptsize                                                  %
 \begin{code}                                                  %
@@ -148,7 +147,6 @@ Failure repaired by 148 mutants.                              %
 %\vspace{-0.18in}                                             %
 \label{fig:explain}                                           %
 \end{figure}                                                  %
-\end{comment}                                                 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Table \ref{bothtable} only includes 8 of the 28 SpiderMonkey faults.  This is due to a problem with the data set:  producing ground truth patches for a large application, in the sense of finding a minimal, clearly fault-fixing code change that can be back-ported to the original code is difficult \cite{PLDI13}.  While we believe the 28 faults identified in the FPF benchmark data are correct, it is very difficult to produce a valid patch of version 1.6 that captures the fix for most of these faults.  In some cases the final commit that caused tests to stop failing appeared to only be the end of a complex series of changes that converged on a correct fix.  In other cases, the code was modified so extensively before the fix that identifying ``the incorrect part'' of the original code seemed to owe more to guesswork than certainty.  The evaluation of localization therefore only examines the 8 faults for which we could be reasonably certain that the patch to 1.6 was correct and characterized the fault in question accurately.  In no case was the patch equivalent to one of the mutants (the smallest patch modified two statements).
@@ -160,7 +158,7 @@ No method performs extremely well --- for half the faults, no methods produced w
 % \subsubsection{Error Explanation}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      %
 %                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        %
 %                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        %
- Figure \ref{fig:explain} shows part of the patch for SpiderMonkey fault 115, and the {\bf Repair} output that successfully localizes the fault (the 3rd mutant output), to give some idea of the information our method presents.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  %
+                                                                                                                                                                                                                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -255,6 +253,102 @@ ID& Repair & MUSE & MUSEUM & ID & Repair & MUSE & MUSEUM \\
 
 Table \ref{bothtable} shows localization results for GCC 4.3.0.  Again, only some faults were deemed to have strong enough ground truth patches for evaluation.   MUSE performed poorly, with no useful (by the standard of having at least one faulty statement in the top 25) localizations.  MUSEUM provided 3 useful localizations, but no very high quality localizations.  Only {\bf Repair} performed very well, with useful localizations for 5 faults, and the fault was in the top 5 statements for 4 of these.
 
+\subsection{Coverage Localization}
+
+While {\bf Repair} is often a high-quality localization technique, it often fails to localize a fault at all.  This failure suggested that for the compiler setting, we should consider other localizations methods, even ones we do not consider likely to be helpful in more general settings.  Compiler faults are often so complex and hard to debug that even a somewhat informative localization might be useful.
+
+By definition, when a mutant repairs a test case, it changes the
+behavior of the test.  In some cases, this behavioral change may be
+limited to changes in program state and data values.  However, the
+vast majority of mutant repairs \emph{for a compiler} can be expected to also modify the code coverage of a
+test; in our compiler experiments, there were no repairs that did not change
+coverage; this would be very unlikely to hold in other software settings, where many bugs related to data values; for well-fuzzed compilers, however, few bugs are simple, e.g., off-by-one bugs in an integer value.  If a fault can be avoided by disabling a
+problematic optimization in a compiler, this naturally leads to
+changed coverage.  If the fault is due to a bad conditional, where a
+program path should include additional code, the repair will often
+change the execution to include the omitted code.  As a localization
+for a fault, then, we can examine the source statements whose
+coverage changed most often in repairs.  Early experiments with this
+ approach showed that a useful coverage change localization must  account for the frequency of a
+change.  Some coverage changes are extremely common across all
+failures, faults, and repairing mutants,
+and therefore likely not related to any specific fault.
+
+\begin{quote}
+The {\bf Coverage} localization for a failing test case $f \in F$ ($F$
+is the set of all failing test cases) ranks
+statements by the function $r$ (for rank) where:
+%$$U = s : \forall m . \forall t \in F . c(m,t,s) = 1$$
+$$C(s) = \sum_{t \in F} (\sum_{m \in R(t)} c(m,t,s))$$
+%\[
+$$r(s,f) = \sum_{m \in R(f)}\frac{1}{C(s)}c(m,f,s)$$
+%\begin{cases}
+% \sum_{m \in R(f)}\frac{1}{C(s)}c(m,f,s) & s \not\in U\\
+%   0 & s \in U
+%\end{cases}
+%\]
+$c(m,t,s)$ is 1 if coverage of $s$ changes for test $t$
+with mutant $m$, and 0 otherwise.  $R(f)$ is the set of mutants repairing $f$.
+\end{quote}
+
+That is, the ranking is based on the number of times a statement's
+coverage changes its value (covered or not covered) from the original
+execution of $f$ in executions of mutants that repair $f$.  Changes are weighted by their inverse frequency over all
+failures and all mutants.
+Higher values for $r$ result in a higher ranking (more likely to
+be faulty).  
+
+The coverage localization also provides a kind of explanation, though
+a less direct one than with a repair.  For any
+interesting line of code in the coverage-change-based localization,
+the user can investigate a particular instance of the change,
+by selecting a single mutant and stepping through the execution of the
+failing test case in a debugger to the point of change.  The user can also
+browse through all mutants that produce this coverage change for the test
+case.
+
+
+\begin{figure}                                                %
+{\scriptsize                                                  %
+\begin{code}                                                  %
+{\bf Diff of old ($<$) vs new ($>$) for 115 patch (portion):} %
+...                                                           %
+<             vp[1] = OBJECT\_TO\_JSVAL(thisp);               %
+<         \} else \{                                          %
+<             ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);    %
+<         \}                                                  %
+...                                                           %
+<                   a->avail = (jsuword)sp;                   %
+<               \}                                            %
+...                                                           %
+---                                                           %
+>         RESTORE\_SP(fp);                                    %
+...                                                           %
+{\bf Mutant information:}                                     %
+Failure repaired by 148 mutants.                              %
+...                                                           %
+\#3: delete statement mutant of jsinterp.c:944:               %
+                                                              %
+            vp[1] = OBJECT\_TO\_JSVAL(thisp);                 %
+        \} else \{                                            %
+/*MUTANT    ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);*/    %
+        \}                                                    %
+
+
+
+{\bf Coverage change information:}
+...
+\#6: 5 mutants (3.38\% of repairs) added jsinterp.c:992:
+                   a->avail = (jsuword)sp; /* ADDED */                                                            %
+\end{code}                                                    %
+}                                                             %
+\caption{Patch and explanation for fault 115}                 %
+%\vspace{-0.18in}                                             %
+\label{fig:explain}                                           %
+\end{figure}                                                  %
+
+Figure \ref{fig:explain} shows part of the patch for SpiderMonkey fault 115, and the {\bf Repair} and {\bf Coverage} outputs that successfully localize the fault (the 3rd mutant output, and the 6th coverage change output), to give some idea of the information our methods present.  For {\bf Coverage}, it is surprising that the sixth highest ranked change only appeared in 5 of 148 repairs. This change ranked high out of thousands of changes because it was unusual, appearing for only 10 repairs in the entire SpiderMonkey analysis. 
+
 \input{othertools}
 
 \subsection{Discussion}
@@ -279,11 +373,13 @@ Finally, in contrast to many previously reported results in fault localization, 
 }
 \comment{ In one sense, {\bf Coverage} is the most intriguing method presented here.  While it did not perform nearly as well as {\bf Repair}, it did manage, in many cases, to rank \emph{some} faulty line highly relative to the extremely large number of statements executed in each failing GCC run (on the order of 50K-100K+ statements).  In future work, we plan to experiment with different methods for weighting frequency of coverage, perhaps using methods from machine learning, or of pruning changed coverage that is not likely to be relevant.  For example, perhaps the {\bf Repair} approach can be applied, and coverage changes present in very distant failures can be removed, though the argument is less clear, since a coverage change isn't directly associated with the onion-ring structure, and does not directly repair a set of failures.  There is much to be done if automated debugging is ever to make the lives of compiler developers easier in most cases \cite{AutoHelp}.  }
 
-\subsection{Mutation Analysis Costs}
+\section{Mutation Analysis Costs}
 
 The compiler experiments required a large computational budget.  However, our approach is, by design, cheaper than MUSE or Metallaxis-FL, in that, for a program with up-to-date mutation testing results (just knowing which mutants are killed, not a full matrix), it only requires executing mutants over failing tests.  Running each test case under each mutated version of the compiler is cheap: each execution requires around 0.05 seconds for SpiderMonkey, and 0.12 seconds for GCC, on average; moreover, executions can be done in parallel, most failures do not cover most mutants, and vice versa, so the total number of repair checks needed is far less than the product of mutants and failures, and can be spread over many machines.  \comment{The practical approach to fuzzer taming for a large, ongoing project is likely to maintain a set of ``hot'' pre-compiled mutants.  These can be pruned at will by running them on passing test cases, and removing mutants that fail on any test case.  }
 
 Mutation cost reduction techniques are also applicable.  E.g., trivial compiler equivalence (TCE) \cite{TCE} can reject equivalent and redundant mutants, removing almost 30\% of mutants for benchmark subjects. Other techniques, such as using mutant schemas to avoid having to compile and store each mutant, are also applicable --- almost all of the techniques characterized by Offutt and Untch \cite{offutt2001mutation} as \emph{do faster} approaches apply.   Whether sampling mutants \cite{RahulISSRE} is applicable is less clear.  Even if the FPF curve remains the same, a critical mutant for localization might be omitted.  We performed some limited experiments, and found that for a few sample sizes ranging from 13\% of mutants to 50\% of mutants or using only some mutation operators (with the exception of operator-replacement-only), APFD was always better than benchmark set's best metric.   However, the improvement in some cases was \emph{much} smaller than for the full set, and varied considerably (in some cases it was up to 2\% better than our full results).  Fault localization results were much worse, however (with relative rankings preserved) for both our techniques and MUSE/MUSEUM.  \comment{Finally, guided sampling may provide good fuzzer taming (if not fault localization):  compute vectors over a small constant-sized \cite{RahulISSRE} sample of mutants, then report highly distinct failing tests.  Other metrics, such as coverage-based comparisons, could provide hints as to likely distinct tests (and thus mutants covered by them) to focus on first.  These are likely to be different faults.  After repairing some of these, choose mutants to evaluate that are covered by multiple tests with few or no repairing mutants (since such tests are the ones most likely to be distinct but not yet identified).  Such an approach could be quite cost-effective, requiring only a relatively small number of mutant evaluations before providing useful results.}
+
+\subsection{Hot and Cold Running Mutants}
 
 \subsection{Threats to Validity}
 
