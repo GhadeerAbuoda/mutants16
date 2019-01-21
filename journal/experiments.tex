@@ -307,47 +307,105 @@ failing test case in a debugger to the point of change.  The user can also
 browse through all mutants that produce this coverage change for the test
 case.
 
+\begin{figure}                                                
+{\scriptsize 
 
-\begin{figure}                                                %
-{\scriptsize                                                  %
-\begin{code}                                                  %
-{\bf Diff of old ($<$) vs new ($>$) for 115 patch (portion):} %
-...                                                           %
-<             vp[1] = OBJECT\_TO\_JSVAL(thisp);               %
-<         \} else \{                                          %
-<             ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);    %
-<         \}                                                  %
-...                                                           %
-<                   a->avail = (jsuword)sp;                   %
-<               \}                                            %
-...                                                           %
----                                                           %
->         RESTORE\_SP(fp);                                    %
-...                                                           %
-{\bf Mutant information:}                                     %
-Failure repaired by 148 mutants.                              %
-...                                                           %
-\#3: delete statement mutant of jsinterp.c:944:               %
-                                                              %
-            vp[1] = OBJECT\_TO\_JSVAL(thisp);                 %
-        \} else \{                                            %
-/*MUTANT    ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);*/    %
-        \}                                                    %
+\begin{code}                                                  
+{\bf Diff of old ($<$) vs new ($>$) for 115 patch (portion):} 
+...                                                           
+<             vp[1] = OBJECT\_TO\_JSVAL(thisp);               
+<         \} else \{                                          
+<             ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);    
+<         \}                                                  
+...                                                           
+<                   a->avail = (jsuword)sp;                   
+<               \}                                            
+...                                                           
+---                                                           
+>         RESTORE\_SP(fp);                                    
+...                                                           
+{\bf Mutant information:}                                     
+Failure repaired by 148 mutants.                              
+...                                                           
+\#3: delete statement mutant of jsinterp.c:944:               
+                                                              
+            vp[1] = OBJECT\_TO\_JSVAL(thisp);                 
+        \} else \{                                            
+/*MUTANT    ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);*/    
+        \}                                                    
 
 
 
 {\bf Coverage change information:}
 ...
 \#6: 5 mutants (3.38\% of repairs) added jsinterp.c:992:
-                   a->avail = (jsuword)sp; /* ADDED */                                                            %
-\end{code}                                                    %
-}                                                             %
-\caption{Patch and explanation for fault 115}                 %
-%\vspace{-0.18in}                                             %
-\label{fig:explain}                                           %
-\end{figure}                                                  %
+                   a->avail = (jsuword)sp; /* ADDED */                                                            
+\end{code}                                                    
+}
+\caption{Patch and explanation for fault 115}                 
+%\vspace{-0.18in}                                             
+\label{fig:explain}                                           
+\end{figure}   
+
 
 Figure \ref{fig:explain} shows part of the patch for SpiderMonkey fault 115, and the {\bf Repair} and {\bf Coverage} outputs that successfully localize the fault (the 3rd mutant output, and the 6th coverage change output), to give some idea of the information our methods present.  For {\bf Coverage}, it is surprising that the sixth highest ranked change only appeared in 5 of 148 repairs. This change ranked high out of thousands of changes because it was unusual, appearing for only 10 repairs in the entire SpiderMonkey analysis. 
+
+\begin{table}
+\centering
+{\scriptsize
+\begin{tabular}{|c||c|c|}
+\hline
+& \multicolumn{2}{|c|}{Localization Rank} \\
+\hline
+Fault & Coverage & Repair \\
+\hline
+880 & 2,255 & - \\
+95 & 720 & - \\
+1294 & 190 & 1 \\
+60 &  - & - \\
+1543 & 18 & 19 \\
+1172 & 46 & 28 \\
+1561 & - & - \\
+115 & 6 & 3 \\
+\hline
+\end{tabular}
+}
+\caption{Coverage localization results for SpiderMonkey}
+%\vspace{-0.2in}
+\label{covjstable}
+\end{table}
+
+\begin{table}
+\centering
+{\scriptsize
+\begin{tabular}{|c||c|c|}
+\hline
+& \multicolumn{2}{|c|}{Localization Rank} \\
+\hline
+Fault &Coverage & Repair \\
+\hline
+139094 & 44,561 & - \\
+133004 & 75 & 1 \\
+158782 & - & - \\
+156496 & 3,067 & - \\
+143677 & 186 & - \\
+158555 & 490 & - \\
+134321 & - & - \\
+133940 & 260 & 4 \\
+141195 & 465 & - \\
+156795 & 19 & - \\
+139709 & 43,903 & 10 \\
+155698 & 85 & 1 \\
+138646 & 2 & - \\
+140795 & 302 & 34 \\
+136501 & 223 & 5\\
+134322 & 639 & - \\
+\hline
+\end{tabular}
+}
+\caption{Coverage localization results for GCC}
+\label{covgcctable}
+\end{table}
 
 \input{othertools}
 
