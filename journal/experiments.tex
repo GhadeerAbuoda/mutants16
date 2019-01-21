@@ -109,44 +109,7 @@ Fault & Repair & MUSE & MUSEUM \\
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}                                                %
-{\scriptsize                                                  %
-\begin{code}                                                  %
-{\bf Diff of old ($<$) vs new ($>$) for 115 patch (portion):} %
-...                                                           %
-<             vp[1] = OBJECT\_TO\_JSVAL(thisp);               %
-<         \} else \{                                          %
-<             ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);    %
-<         \}                                                  %
-...                                                           %
-<                   a->avail = (jsuword)sp;                   %
-<               \}                                            %
-...                                                           %
----                                                           %
->         RESTORE\_SP(fp);                                    %
-...                                                           %
-{\bf Mutant information:}                                     %
-Failure repaired by 148 mutants.                              %
-...                                                           %
-\#3: delete statement mutant of jsinterp.c:944:               %
-                                                              %
-            vp[1] = OBJECT\_TO\_JSVAL(thisp);                 %
-        \} else \{                                            %
-/*MUTANT    ok = OBJ\_GET\_PROPERTY(cx, thisp, id, \&v);*/    %
-        \}                                                    %
-
-
-
-{\bf Coverage change information:}
-...
-\#6: 5 mutants (3.38\% of repairs) added jsinterp.c:992:
-                   a->avail = (jsuword)sp; /* ADDED */                                                            %
-\end{code}                                                    %
-}                                                             %
-\caption{Patch and explanation for fault 115}                 %
-%\vspace{-0.18in}                                             %
-\label{fig:explain}                                           %
-\end{figure}                                                  %
+  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Table \ref{bothtable} only includes 8 of the 28 SpiderMonkey faults.  This is due to a problem with the data set:  producing ground truth patches for a large application, in the sense of finding a minimal, clearly fault-fixing code change that can be back-ported to the original code is difficult \cite{PLDI13}.  While we believe the 28 faults identified in the FPF benchmark data are correct, it is very difficult to produce a valid patch of version 1.6 that captures the fix for most of these faults.  In some cases the final commit that caused tests to stop failing appeared to only be the end of a complex series of changes that converged on a correct fix.  In other cases, the code was modified so extensively before the fix that identifying ``the incorrect part'' of the original code seemed to owe more to guesswork than certainty.  The evaluation of localization therefore only examines the 8 faults for which we could be reasonably certain that the patch to 1.6 was correct and characterized the fault in question accurately.  In no case was the patch equivalent to one of the mutants (the smallest patch modified two statements).
@@ -308,8 +271,7 @@ browse through all mutants that produce this coverage change for the test
 case.
 
 \begin{figure}                                                
-{\scriptsize 
-
+{\scriptsize                                                  
 \begin{code}                                                  
 {\bf Diff of old ($<$) vs new ($>$) for 115 patch (portion):} 
 ...                                                           
@@ -341,11 +303,11 @@ Failure repaired by 148 mutants.
 \#6: 5 mutants (3.38\% of repairs) added jsinterp.c:992:
                    a->avail = (jsuword)sp; /* ADDED */                                                            
 \end{code}                                                    
-}
+}                                                             
 \caption{Patch and explanation for fault 115}                 
 %\vspace{-0.18in}                                             
 \label{fig:explain}                                           
-\end{figure}   
+\end{figure}                                               
 
 
 Figure \ref{fig:explain} shows part of the patch for SpiderMonkey fault 115, and the {\bf Repair} and {\bf Coverage} outputs that successfully localize the fault (the 3rd mutant output, and the 6th coverage change output), to give some idea of the information our methods present.  For {\bf Coverage}, it is surprising that the sixth highest ranked change only appeared in 5 of 148 repairs. This change ranked high out of thousands of changes because it was unusual, appearing for only 10 repairs in the entire SpiderMonkey analysis. 
