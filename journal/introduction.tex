@@ -48,4 +48,10 @@ This paper investigates the utility of using distance metrics based on the causa
 
 \subsection{Contributions}
 
-The contributions of this paper include our ideas about how to measure distance between program executions, but more importantly some practical proposals for using such a metric in compiler fuzzer taming and fault localization.  Our experimental results show that, for two realistic complex compilers, Mozilla's SpiderMonkey 1.6 JIT for JavaScript and GCC 4.3.0, using mutant response metrics improves FPF-based fuzzer taming over best previous results \cite{PLDI13}, in multiple ways.  Our fault localization approach also compares favorably to state-of-the-art fault localization techniques \cite{MUSE,multilingual,Metallaxis}, albeit with a more limited applicability (but also a lower cost).
+This paper extends our 2018 ISSRE paper \cite{ISSRE18Mutants} introducing our approach. That work, and this, suggested a novel way of measuring distance between program executions, but more importantly provided some practical proposals for using such a metric in compiler fuzzer taming and fault localization.  Our experimental results show that, for two realistic complex compilers, Mozilla's SpiderMonkey 1.6 JIT for JavaScript and GCC 4.3.0, using mutant response metrics improves FPF-based fuzzer taming over best previous results \cite{PLDI13}, in multiple ways.  Our fault localization approach also compares favorably to state-of-the-art fault localization techniques \cite{MUSE,multilingual,Metallaxis}, albeit with a more limited applicability (but also a lower cost).  We extend the earlier paper by:
+
+\begin{itemize}
+\item providing an extended example to help readers understand the metric, FPF method, and fault localization approach,
+\item introducing and evaluating another compiler fault localization approach, based on code coverage changes,
+\item and including experimental results summarizing the effectiveness and cost reduction provided by various optimizations of our approach.
+\end{itemize}
