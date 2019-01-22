@@ -63,7 +63,7 @@ CReduce} test cases, we assume that for a perfect metric, the nearest neighbor s
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\columnwidth]{comparejs}
+  \includegraphics[width=0.95\columnwidth]{comparejs}
   \caption{APFD values for Spidermonkey suite slices}
   \label{comparejs}
 \end{figure}%
@@ -130,7 +130,7 @@ No method performs extremely well --- for half the faults, no methods produced w
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\columnwidth]{comparegcc}
+  \includegraphics[width=0.95\columnwidth]{comparegcc}
   \caption{APFD values for GCC suite slices}
   \label{comparegcc}
 \end{figure}%
@@ -217,6 +217,7 @@ ID& Repair & MUSE & MUSEUM & ID & Repair & MUSE & MUSEUM \\
 Table \ref{bothtable} shows localization results for GCC 4.3.0.  Again, only some faults were deemed to have strong enough ground truth patches for evaluation.   MUSE performed poorly, with no useful (by the standard of having at least one faulty statement in the top 25) localizations.  MUSEUM provided 3 useful localizations, but no very high quality localizations.  Only {\bf Repair} performed very well, with useful localizations for 5 faults, and the fault was in the top 5 statements for 4 of these.
 
 \subsection{Coverage Localization}
+\label{sec:covloc}
 
 While {\bf Repair} is often a high-quality localization technique, it often fails to localize a fault at all.  This failure suggested that for the compiler setting, we should consider other localizations methods, even ones we do not consider likely to be helpful in more general settings.  Compiler faults are often so complex and hard to debug that even a somewhat informative localization might be useful.
 
@@ -273,7 +274,7 @@ case.
 \begin{figure}                                                
 {\scriptsize                                                  
 \begin{code}                                                  
-{\bf Diff of old ($<$) vs new ($>$) for 115 patch (portion):} 
+{\bf Diff of old ($<$) vs new ($>$) for SpiderMonkey fault 8 patch (portion):} 
 ...                                                           
 <             vp[1] = OBJECT\_TO\_JSVAL(thisp);               
 <         \} else \{                                          
@@ -365,17 +366,17 @@ The other way to think about {\bf Repair} for the non-compiler faults especially
 %\comment{
  Why does {\bf Repair} perform best in the \emph{compiler} setting in particular?  It is impossible to be sure, but one  possibility is power to distinguish repairs.  If there are many repairs for a failure, how can the most important ones be distinguished?  MUSEUM relies on a large set of mutation operators, and assumes that faulty statements will have multiple repairs, compared to non-faulty statements, or that faulty statements will be less likely to cause passing tests to fail when mutated.  Restricting ourselves to cases where {\bf Repair} and MUSEUM both provided a localization, we know that some faulty statement was in a repairing mutant, but that passing tests could not distinguish this mutant  from other repairs (since we only use repairs that cause no passing tests to fail).  Many of the faulty statement repairs (as expected for optimizing compilers) were statement deletions and conditional negations.  For these, it seems unlikely that Proteum would produce more mutants repairing the statement, though perhaps Proteum would create repairs for other statements that cannot be modified into a repair by any of Andrews' operators.  Our suspicion is somewhat confirmed by the results below where we used our methods with the MUSEUM mutant result set.
 
-Finally, in contrast to many previously reported results in fault localization (which are typically over much simpler programs and faults than subtle compiler semantics bugs) all methods we applied very frequently failed to provide a useful localization at all for our compiler faults.  This is presumably due to the sheer difficulty of compiler bugs:  our approach, and MUSEUM, performed very well on complex multi-lingual faults in the MUSEUM data set.  In one sense, {\bf Coverage} is the most intriguing method presented here.  While it did not perform nearly as well as {\bf Repair}, it did manage, in many cases, to rank \emph{some} faulty line highly, relative to the extremely large number of statements executed in each failing GCC run (on the order of 50K-100K+ statements).  In future work, we plan to experiment with different methods for weighting frequency of coverage, perhaps using methods from machine learning, or of pruning changed coverage that is not likely to be relevant.  For example, perhaps the {\bf Repair} approach can be applied, and coverage changes present in very distant failures can be removed, though the argument is less clear, since a coverage change isn't directly associated with the onion-ring structure, and does not directly repair a set of failures.  In fact, since a study of the importance of delta-debugging in localization \cite{ReduceLocalize} showed that even traditional Spectrum-Based Fault Localization can \emph{sometimes} produce good results on SpiderMonkey faults (though often performing worse than even {\bf Coverage}), we suspect that combining multiple methods, using some method to cross-assess confidence might be important for obtaining reliably good compiler bug localizations.
-There is much to be done if automated debugging is ever to make the lives of compiler developers easier in most cases \cite{AutoHelp}.
+Finally, in contrast to many previously reported results in fault localization (which are typically over much simpler programs and faults than subtle compiler semantics bugs) all methods we applied very frequently failed to provide a useful localization at all for our compiler faults.  This is presumably due to the sheer difficulty of compiler bugs:  our approach, and MUSEUM, performed very well on complex multi-lingual faults in the MUSEUM data set.  In one sense, {\bf Coverage} is the most intriguing method presented here.  While it did not perform nearly as well as {\bf Repair}, it did manage, in many cases, to rank \emph{some} faulty line highly, relative to the extremely large number of statements executed in each failing GCC run (on the order of 50K-100K+ statements).  In future work, we plan to experiment with different methods for weighting frequency of coverage, perhaps using methods from machine learning, or of pruning changed coverage that is not likely to be relevant.  For example, perhaps the {\bf Repair} approach can be applied, and coverage changes present in very distant failures can be removed, though the argument is less clear, since a coverage change isn't directly associated with the onion-ring structure, and does not directly repair a set of failures.  In fact, a study of the importance of delta-debugging in localization \cite{ReduceLocalize} showed that even traditional Spectrum-Based Fault Localization (SBFL) can \emph{sometimes} produce good results on SpiderMonkey faults.  Such methods, of course, often perform worse than even {\bf Coverage}; e.g., for our fault \#8 (their fault ID 115), {\bf Repair} and {\bf Coverage} produced localizations at rank 3 and 6, respectively, while the best SBFL result was well over rank 32.  We suspect that combining multiple methods, using some method to cross-assess confidence might be required to obtain reliably good compiler bug localizations, and assign good confidence scores to localizations.  There is much to be done if automated debugging is ever to make the lives of compiler developers easier in most cases \cite{AutoHelp}, and a human study using real, complex compiler bugs would be ideal, since previous studies of localization effectiveness tend to focus on simple tasks even moderately experienced developers can potentially succeed at.  Fixing deep optimizing compiler bugs is a very specialized skill, in contrast to general debugging skills.
 
 \comment{ For the compiler faults, if any repair for a failure modified a faulty statement, {\bf Repair} always ranked it in the top 34 localizations, ranked it in the top 5 in 6 of 10 such cases, and 3 times ranked it 1st.  MUSEUM, in contrast, ranked one such repair 195th, never ranked a fault in its top 3 statements, and only ranked a fault in its top 5 statements twice.  Of course, MUSEUM might be suffering from a lack of mutation operators, but in some cases this is unlikely due to the nature of the repairs.  }
 
 
 \comment{ In one sense, {\bf Coverage} is the most intriguing method presented here.  While it did not perform nearly as well as {\bf Repair}, it did manage, in many cases, to rank \emph{some} faulty line highly relative to the extremely large number of statements executed in each failing GCC run (on the order of 50K-100K+ statements).  In future work, we plan to experiment with different methods for weighting frequency of coverage, perhaps using methods from machine learning, or of pruning changed coverage that is not likely to be relevant.  For example, perhaps the {\bf Repair} approach can be applied, and coverage changes present in very distant failures can be removed, though the argument is less clear, since a coverage change isn't directly associated with the onion-ring structure, and does not directly repair a set of failures.  There is much to be done if automated debugging is ever to make the lives of compiler developers easier in most cases \cite{AutoHelp}.  }
 
-\section{Mutation Analysis Costs}
+\section{Mutation Analysis Costs and Potential Optimizations}
+\label{sec:highcost}
 
-The compiler experiments required a large computational budget.  However, our approach is, by design, cheaper than MUSE or Metallaxis-FL, in that, for a program with up-to-date mutation testing results (just knowing which mutants are killed, not a full matrix), it only requires executing mutants over failing tests.  Running each test case under each mutated version of the compiler is cheap: each execution requires around 0.05 seconds for SpiderMonkey, and 0.12 seconds for GCC, on average; moreover, executions can be done in parallel, most failures do not cover most mutants, and vice versa, so the total number of repair checks needed is far less than the product of mutants and failures, and can be spread over many machines.  
+Our compiler experiments required a very large computational budget.  However, our approach is, by design, cheaper than MUSE or Metallaxis-FL, in that, for a program with up-to-date mutation testing results (just knowing which mutants are killed, not a full matrix), it only requires executing mutants over failing tests.  Running each test case under each mutated version of the compiler is cheap: each execution requires around 0.05 seconds for SpiderMonkey, and 0.12 seconds for GCC, on average; moreover, executions can be done in parallel, most failures do not cover most mutants, and vice versa, so the total number of repair checks needed is far less than the product of mutants and failures, and can be spread over many machines.  
 
 Mutation cost reduction techniques are also applicable.  E.g., trivial compiler equivalence (TCE) \cite{TCE} can reject equivalent and redundant mutants, removing almost 30\% of mutants for benchmark subjects. Other techniques, such as using mutant schemas to avoid having to compile and store each mutant, are also applicable --- almost all of the techniques characterized by Offutt and Untch \cite{offutt2001mutation} as \emph{do faster} approaches apply, without any loss of ability to identify or localize faults.
 
@@ -387,9 +388,24 @@ We expect that fuzzer taming will mostly be performed when someone is fuzzing a 
 
 \subsection{Lossy Techniques}
 
-Mutation cost reduction techniques classified as \emph{do fewer} on the other hand involve a loss of signal, not just more efficient production of the same signal.  Figures \ref{samplejs} and \ref{samplegcc} show, respectively, the results of random sampling of mutants for SpiderMonkey and GCC, by comparing the APFD obtained on a set of 30 random samples of the chosen percentage of mutants with the APFD for the full mutant set.  Because some mutants are actually misleading with respect to distinguishing faults, sometimes sampling can improve results.  Sampling 10\% of mutants directly translates to our approach requiring about 90\% less time, or less computing power if run in parallel.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.95\columnwidth]{samplejs}
+  \caption{APFD values for Spidermonkey samples}
+  \label{samplejs}
+\end{figure}%
 
-Pure random sampling is fairly effective for GCC, but more mutants are required to obtain a comparable APFD on average, for SpiderMonkey.  
+\begin{figure}
+  \centering
+  \includegraphics[width=0.95\columnwidth]{samplegcc}
+  \caption{APFD values for GCC samples}
+  \label{samplegcc}
+\end{figure}%
+
+Mutation cost reduction techniques classified as \emph{do fewer} on the other hand involve a loss of signal, not just more efficient production of the same signal.  Figures \ref{samplejs} and \ref{samplegcc} show, respectively, the results of random sampling of mutants for SpiderMonkey and GCC, by comparing the APFD obtained on a set of 30 random samples of the chosen percentage of mutants with the APFD for the full mutant set.  Because some mutants are actually misleading with respect to distinguishing faults, sometimes sampling can improve results.  Sampling 10\% of mutants directly translates to our approach requiring about 90\% less time (or less computing power if run in parallel).  We assume a ``hot'' mutants approach in that our sampling is of compilable, test-passing mutants.  A larger sample would be required, in proportion to how many mutants compile and pass tests, to achieve the same results in a scenario with only ``cold'' mutants.
+
+Pure random sampling is fairly effective for GCC, but more mutants are required to obtain a comparable APFD on average, for SpiderMonkey.  The reason for this difference is not easy to understand.  At a high level, every mutant that repairs at least one failing test test case provides at most one bit of information for fuzzer taming.  Some repairing mutants repair all test cases (thus providing no information to distinguish faults), and others provide potentially redundant information in that they repair the same set of mutants as another mutant.  Mutants that repair no test cases provide no information, of course.  Given that more SpiderMonkey mutants (12.6\%) repaired a test case than did GCC mutants (7.8\%), it would seem that a \emph{smaller} sample of mutants would be required to produce the ``same number of bits of information'' with SpiderMonkey.  However, SpiderMonkey mutants are more redundant than GCC mutants, and, perhaps more importantly, the SpiderMonkey code is less well-structured, and changes behavior for more causally complex (and unrelated to faults and clear optimization levels) reasons than the more mature GCC code, making each mutant's bit of information inherently more ``noisy.''
+For GCC, using only 30\% of the mutants produces results quite close to the optimal results, and almost never drops below 90\% effectiveness.  For SpiderMonkey, similar results come with 60\% of mutants.  Sampling is an inherently incremental process:  mutants can be processed in a random order, and a developer can compute the curve at any point in time.  We observed that the early curve is reliably good for both SpiderMonkey and GCC, even with as few as 10\% of mutants; most variance is in the further reaches of the curve.  If developers can identify and fix bugs based on early mutant results, these can be fed back into the process, and mutants not covered by any remaining unfixed tests can be removed from the set.  For fault localization, with hot mutants a single failing test's complete repair set can be found with relatively few evaluations, and then the repairing mutants can be evaluated on all other tests, to compute a localization that is essentially as accurate as the best ones we produced (distances may be slightly off due to mutants repairing other tests, but not the test being localized, but the sampling is likely to largely handle this issue, since exact distances are not important, only relative ones).
 
 \subsection{Threats to Validity}
 
