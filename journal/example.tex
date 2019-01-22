@@ -2,3 +2,43 @@
 \label{sec:example}
 
 To better understand the causal approach taken in this paper, it is useful to consider a simplified, abstract example, and understand how the approach proposed would apply to this example.
+
+\begin{figure*}
+\begin{code}
+ 01  void compile(program: feature list, optimizeLevel: int) \{
+ 02    internalRepresentation = initInternalRep(program);
+ 03    if optimizeLevel > 0: \{
+ 04       if feature1 in program:
+ 05          if feature2 in program:
+ 06             corrupt(internalRepresentation);
+ 07       if optimizeLevel > 1: \{
+ 08          if feature3 in program:
+ 09             if feature4 not in program:
+ 10                corrupt(internalRepresentation);
+ 11          if feature5 in program:
+ 12             if feature6 in program:
+ 13                corrupt(internalRepresentation);
+ 14       \}
+ 15    \}
+ 16    /* Will produce wrong code if structure has been corrupted */
+ 17    generateCode(internalRepresentation);
+\end{code}
+\caption{A toy ``optimizing compiler'' with multiple bugs}
+\label{fig:example}
+\end{figure*}
+
+\begin{figure}
+\begin{code}
+Test 1:  (1, 2)
+Test 2:  (3)
+Test 3:  (5, 6)
+\end{code}
+\caption{Failing tests for the toy compiler.}
+\label{fig:toybugs}
+\end{figure}
+
+Consider the pseudo-code ``compiler'' in Figure \ref{fig:example}.  We can imagine that there is a large amount of code (not shown) in the {\tt initInternalRep} and {\tt generateCode} functions.  Assume, however, that the only bugs in the compiler are the {\tt corrupt} calls.  Traditional Spectrum-Based Fault Localization (SBFL) techniques can be easily ``confused'' in multiple-fault settings, and by cases such as this, where there may be strong correlations between code covered by the (fault-free) {\tt initInternalRep} and {\tt generateCode} functions and the features contained in programs, making lines of code far from the fault locations appear suspicous.
+
+Assume that all of our test cases run the compiler with {\tt optimizeLevel} of 2, so as to potentially apply all optimizations.  A popular way to fuzz a compiler is to compare program behavior when code is compiled with all optimizations with code compiled with no optimizations, so this reflects real-world compiler testing well.  A set of delta-debugged failing tests, then, might be those shown in Figure \ref{fig:toybugs}.
+
+Further, let us only consider two kinds of mutants:  condition-negation and statement deletion mutants.  Obviously, negating the condition on line 3 will make all of our failing test cases pass, and negating the condition on line 7 will make test cases 2 and 3 pass, but not test case 1.  Negating the conditions on lines 4-5, 8-9, and 11-12 will repair our test cases, but is also likely to make some passing test case fail, so these mutants will not be used in our analysis.  Finally, the only statements that can be deleted without breaking the code are deletions of the {\tt corrupt} calls on lines 6, 10, and 13.  We can identify these mutants, which will form the basis of our distance metric and our fault localization, by the line number of the change, since there is only one mutant per line in the set.  Each test can then be associated with a vector of 5 elements:  {\tt (repaired by line 3, repaired by line 6, repaired by line 7, repaired by line 10, repaired by line 13)}. 
