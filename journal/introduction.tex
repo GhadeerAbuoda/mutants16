@@ -46,11 +46,11 @@ This paper investigates the utility of using distance metrics based on the causa
 
 \subsection{Contributions}
 
-This paper extends our 2018 ISSRE paper \cite{ISSRE18Mutants} introducing our approach. That work, and this, suggested a novel way of measuring distance between program executions, but more importantly provided some practical proposals for using such a metric in compiler fuzzer taming and fault localization.  Our experimental results show that, for two realistic complex compilers, Mozilla's SpiderMonkey 1.6 JIT for JavaScript and GCC 4.3.0, using mutant response metrics improves FPF-based fuzzer taming over best previous results \cite{PLDI13}, in multiple ways.  Our fault localization approach also compares favorably to state-of-the-art fault localization techniques \cite{MUSE,multilingual,Metallaxis}, albeit with a more limited applicability (but also a lower cost).  We extend the earlier paper by:
+This paper extends our 2018 ISSRE paper \cite{ISSRE18Mutants} introducing our approach. That paper introduced a novel way of measuring distance between program executions, but more importantly provided some practical proposals for using such a metric in compiler fuzzer taming and fault localization.  Our experimental results show that, for two realistic complex compilers, Mozilla's SpiderMonkey 1.6 JIT for JavaScript and GCC 4.3.0, using mutant response metrics improves FPF-based fuzzer taming over best previous results \cite{PLDI13}, in multiple ways.  Our fault localization approach also compares favorably to state-of-the-art fault localization techniques \cite{MUSE,multilingual,Metallaxis} for non-compiler programs, albeit with a more limited applicability (but also a lower cost).  We extend the earlier paper by:
 
 \begin{itemize}
-\item generally expanding discussion of our approach, its' conceptual basis, and related work,
-\item providing an extended example (in Section \ref{sec:example} to help readers better understand the metric, FPF-based fuzzer taming, and our fault localization approach,
+\item generally expanding discussion of our approach, including the conceptual basis for using mutants to measure similarity of executions, and related work,
+\item providing an extended example (in Section \ref{sec:example}) to help readers better understand the metric, FPF-based fuzzer taming, and our fault localization approach,
 \item introducing and evaluating another compiler fault localization approach (in Section \ref{sec:covloc}), based on code coverage changes,
 \item and including a much more in-depth examination of the computational costs of our approach and various ways of reducing that cost, including experimental evaluations (in Section \ref{sec:highcost}).
 \end{itemize}
