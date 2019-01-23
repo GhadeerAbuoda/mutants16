@@ -29,9 +29,9 @@ To better understand the causal approach taken in this paper, it is useful to co
 
 \begin{figure}
 \begin{code}
-Test 1:  (1, 2)
-Test 2:  (3)
-Test 3:  (5, 6)
+T1: (1, 2)
+T2: (3)
+T3: (5, 6)
 \end{code}
 \caption{Failing tests for the toy compiler.}
 \label{fig:toybugs}
@@ -39,14 +39,124 @@ Test 3:  (5, 6)
 
 Consider the pseudo-code ``compiler'' in Figure \ref{fig:example}.  We can imagine that there is a large amount of code (not shown) in the {\tt initInternalRep} and {\tt generateCode} functions.  Assume, however, that the only bugs in the compiler are the {\tt corrupt} calls.  Traditional Spectrum-Based Fault Localization (SBFL) techniques can be easily ``confused'' in multiple-fault settings, and by cases such as this, where there may be strong correlations between code covered by the (fault-free) {\tt initInternalRep} and {\tt generateCode} functions and the features contained in programs, making lines of code far from the fault locations appear suspicous.
 
-Assume that all of our test cases run the compiler with {\tt optimizeLevel} of 2, so as to potentially apply all optimizations.  A popular way to fuzz a compiler is to compare program behavior when code is compiled with all optimizations with code compiled with no optimizations, so this reflects real-world compiler testing well.  A set of delta-debugged failing tests, then, might be those shown in Figure \ref{fig:toybugs}.
+Assume that all of our test cases run the compiler with {\tt
+  optimizeLevel} of 2, so as to potentially apply all optimizations.
+A popular way to fuzz a compiler is to compare program behavior when
+code is compiled with all optimizations with program behavior when
+code is compiled with no optimizations, so this reflects real-world compiler testing.  A set of delta-debugged failing tests, then, might be those shown in Figure \ref{fig:toybugs}.
 
-Further, let us only consider two kinds of mutants:  condition-negation and statement deletion mutants.  Obviously, negating the condition on line 3 will make all of our failing test cases pass, and negating the condition on line 7 will make test cases 2 and 3 pass, but not test case 1.  Negating the conditions on lines 4-5, 8-9, and 11-12 will repair our test cases, but is also likely to make some passing test case fail, so these mutants will not be used in our analysis.  Finally, the only statements that can be deleted without breaking the code are deletions of the {\tt corrupt} calls on lines 6, 10, and 13.  We can identify these mutants, which will form the basis of our distance metric and our fault localization, by the line number of the change, since there is only one mutant per line in the set.  Each test can then be associated with a bit-vector of 5 elements:  {\tt (repaired by line 3, repaired by line 6, repaired by line 7, repaired by line 10, repaired by line 13)}.  The vectors for our tests, then, are:
+Further, let us only consider two kinds of mutants:
+condition-negation and statement-deletion mutants.  Obviously,
+negating the condition on line 3 will make all of our failing test
+cases pass, and negating the condition on line 7 will make test cases
+2 and 3 pass, but not test case 1.  Negating the conditions on lines
+4-5, 8-9, and 11-12 will repair our test cases, but these changes are
+also likely to make some passing test case fail (they represent
+preconditions for compiler optimizations), so these mutants will not
+be used in our analysis.  Finally, the only statements that can be deleted without breaking the code are deletions of the {\tt corrupt} calls on lines 6, 10, and 13.  We can identify these mutants, which will form the basis of our distance metric and our fault localization, by the line number of the change, since there is only one mutant per line in the set.  Each test can then be associated with a bitvector of 5 elements:  {\tt (repaired by line 3, repaired by line 6, repaired by line 7, repaired by line 10, repaired by line 13)}.  The vectors for our tests, then, are:
 
 \begin{code}
-Test 1: 1 1 0 0 0
-Test 2: 1 0 1 1 0
-Test 3: 1 0 1 0 1
+T1: 11000
+T2: 10110
+T3: 10101
 \end{code}
 
-Test 1 thus has a distance of 0.75 from Test 2 and Test 3.  Test 2 has a distance of only 0.5 from Test 3.  If the Furthest-Point-First algorithm starts from Test 1 it will arbitrarily select either Test 2 or 3 next, then the other test.  If it starts with Test 2 or 3, it will select Test 1 next, then the other of the two closer tests.  Of course, taming a set of three failing tests is not difficult.  However, if we imagine a much larger set of failing tests, which contain irrelevant features that cannot be removed by delta-debugging without causing the programs to become syntactically invalid, so long as the basic structure of the cause for failure remains the same, then the FPF algorithm will select tests by the distance between vectors and still essentially produce Test 2, then 1, then 3, for example.
+T1 thus has a distance of 0.75 from T2 and T3.  T2 has
+a distance of only 0.5 from T3, however.  
+
+\subsection{Fuzzer Taming for the Toy Compiler}
+
+If the Furthest-Point-First
+algorithm starts from T1 it will arbitrarily select either T2
+or T3 next, then the other test.  If it starts with T2 or T3, it
+will select T1 next, then the other of the two closer tests.  Of
+course, taming a set of three failing tests is not difficult!
+However, if we imagine a much larger set of failing tests, which
+contain irrelevant features that cannot be removed by delta-debugging
+without causing the programs to become syntactically invalid, so long
+as the basic structure of the cause for failure remains the same, the
+the FPF algorithm will still select tests with the same bitvectors as
+T1, T2, and T3.  Concretely, if we add these tests (shown with associated bitvectors):
+
+\begin{code}
+T4: (1, 2, 7)    11000
+T5: (3, 6)       10110
+T6: (1, 5, 6)    10101
+T7: (1, 2, 5, 6) 10000
+\end{code}
+
+\noindent then FPF from T1 will proceed to a maximally distant
+test, such as T5, at distance 0.75.  The next ranked test could not have
+been T4 (distance 0.0) or T7 (distance 0.5), but could have
+been T2, T3, or T6.  After T1 and T5, the next test in the ranking will be the test whose nearest
+neighbor among already chosen tests is furthest away.  The distances
+to the two tests already chosen are:
+
+{\scriptsize
+\begin{code}
+                         11000  10110
+T2: (3)          10110   0.75   0.00
+T3: (5, 6)       10101   0.75   0.50
+T4: (1, 2, 7)    11000   0.00   0.75
+T6: (1, 5, 6)    10101   0.75   0.50
+T7: (1, 2, 5, 6) 10000   0.50   0.67
+\end{code}
+}
+
+\noindent The FPF algorithm could choose either T3, T6, or T7 all of
+which have a nearest neighbor at distance 0.5.  Let
+us assume it chooses T6.  At this point, the three distinct bugs
+are all ranked.  However, there is one interesting pattern remaining.
+The distances to tests are now:
+
+{\scriptsize
+\begin{code}
+                         11000  10110  10101
+T2: (3)          10110   0.75   0.00   0.50
+T3: (5, 6)       10101   0.75   0.50   0.00
+T4: (1, 2, 7)    11000   0.00   0.75   0.75
+T7: (1, 2, 5, 6) 10000   0.50   0.67   0.67
+\end{code}
+}
+
+\noindent The algorithm is forced to choose T7, the only remaining
+test that does not have the same bitvector as another test.  T7 is
+worth ranking, as it shows that a program can be written that will
+result in wrong code unless both bugs it triggers are fixed.
+
+\subsection{Fault Localization for the Toy Compiler}
+
+Now let us consider the {\bf Repair} fault localization algorithm
+applied to this example.  If we are trying to fix the problem
+exhibited by T2, what will the system suggest to us as the
+location of the fault?  Recall that 1) in {\bf Repair}, a localization
+is the location (and content) of a repairing mutant.  T2 is repaired
+by negating the condition on line 3, negating the condition on line 7,
+or deleting the statement on line 10.  Which of these is best?  {\bf
+  Repair} distinguishes between repairing mutants by ordering them by
+their distance to the most-distant (by bitvector) test also repaired
+by that mutant.  The only other tests repaired by deletion of line 10
+are the other instances of the same bug, all at distance 0.  Of the
+other two repairs, negating the condition on line 3 also repairs T1,
+at distance 0.75, while negating the condition on line 2 repairs
+nothing farther away than T3 at 0.5.
+Therefore, the localization for T2 is (in rank order):
+
+{\scriptsize {\tt 1: DELETE  10                corrupt(internalRepresentation);}}
+
+{\scriptsize {\tt 2: NEGATE  07       if optimizeLevel > 1: \{}}
+
+{\scriptsize {\tt 3: NEGATE  03    if optimizeLevel > 0: \{}}
+
+\subsection{The Onion Ring}
+
+In this simple toy example, the onion ring will only have a few
+layers, one for each possible distance from the test at the center.
+For example, if we take T2 as the center, then the layers will be:
+
+\begin{code}
+ 0.00:  T2 T5
+ 0.50:  T3 T6
+ 0.67:  T7
+ 0.75:  T1 T4
+\end{code}
