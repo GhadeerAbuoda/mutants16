@@ -5,7 +5,12 @@
 % PLDI'16 web site.
 % 
 %\documentclass[format=sigconf]{acmart}
-\documentclass[conference]{IEEEtran}
+%\documentclass[conference]{IEEEtran}
+
+\documentclass[times]{stvrauth}
+
+\usepackage{moreverb}
+
 
 % \documentclass[pldi-cameraready]{sigplanconf-pldi16}
 
@@ -57,23 +62,29 @@
 %\acmYear{2017}
 %\copyrightyear{2017}
 
-\newcommand{\comment}[1]{}
+%\newcommand{\comment}[1]{}
 
 \begin{document}
 
-\title{Using Mutants to Help Developers Distinguish and Debug (Compiler) Faults}
+\runningheads{J. Holmes and A. Groce}{Using mutants to help developers}
 
+\title{Using mutants to help developers distinguish and debug (compiler) faults}
 
-\author{
-\IEEEauthorblockN{Josie Holmes}
-\IEEEauthorblockA{School of Informatics, Computing \& Cyber Systems\\
-Northern Arizona University\\
-Email: josie.holmes@nau.edu}
-\and
-\IEEEauthorblockN{Alex Groce}
-\IEEEauthorblockA{School of Informatics, Computing \& Cyber Systems\\
-Northern Arizona University\\
-Email: agroce@gmail.com}}
+\author{Josie Holmes\affil{1}, Alex Groce\affil{1}}
+
+\address{\affilnum{1}School of Informatics, Computing \& Cyber Systems\\
+Northern Arizona University}
+
+%\author{
+%\IEEEauthorblockN{Josie Holmes}
+%\IEEEauthorblockA{School of Informatics, Computing \& Cyber Systems\\
+%Northern Arizona University\\
+%Email: josie.holmes@nau.edu}
+%\and
+%\IEEEauthorblockN{Alex Groce}
+%\IEEEauthorblockA{School of Informatics, Computing \& Cyber Systems\\
+%Northern Arizona University\\
+%Email: agroce@gmail.com}}
 
 
 %

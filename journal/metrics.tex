@@ -26,14 +26,6 @@ vector, matches our intuitions about the above comparisons.  It
 essentially formalizes the intuition of the onion-ring model, where
 more matching repairs indicates a much higher probability two failures
 are due to the same fault, even if not all repairs match.
-\comment{
-\footnote{In Section \ref{conc} we discuss uses of $d$
-requiring comparison of both failing and passing test cases:  in this 
-case, we would use three-valued vectors, where 1 indicates a 
-failing property succeeds and -1 that a succeeding property 
-fails.  For such an application, we could remove the requirement that
-a repair not be a killed mutant, since the passing test vectors would encode
-that information.}}
 
 Given such a metric, FPF \cite{Gonzalez} fuzzer taming \cite{PLDI13}
 begins by ranking as first an arbitrary test case.   FPF next ranks the test
