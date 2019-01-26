@@ -47,6 +47,24 @@ additional coverage information.  We would also be very interested to
 compare our localizations with the Metallaxis
 \cite{Metallaxis,Papadakis} approach.}
 
+More practically, we would like to tightly integrate our approach with
+automated test generation tools, such as TSTL \cite{tstlsttt,NFM15},
+DeepState \cite{DeepState,DeepStateTutorial}, Echidna \cite{Echidna}, and
+Manticore \cite{Manticore}.  Automated test generation tools tend to produce a
+large number of passing and failing tests, and are often used in
+``overnight'' runs where adding a step to use mutants to triage
+failing tests and provide localization suggestions for the highly
+ranked tests may not even impose a noticable overhead on current usage
+practices.  The latter two tools (Echidna and Manticore), which target smart
+contracts for the Ethereum blockchain \cite{wood2014ethereum}, are
+particularly promising opportunities, because the gas-limited computation bounds of the Ethereum
+Virtual Machine essentially guarantee that smart contract code is
+small enough to make mutation analysis cheap.  The availability of a
+multi-language mutation analysis tool \cite{RegExpMut} supporting
+Python, C/C++, and Solidity (the language used for most smart
+contracts) means that a common infrastructure base can be shared by
+all of these tool integrations.
+
 We also plan to explore other applications of mutant-based metrics.
 Many software engineering techniques rely on measuring distance
 between program executions \cite{BallConcept,NearNeighbor}.  Not all
