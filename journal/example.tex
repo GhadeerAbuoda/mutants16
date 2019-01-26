@@ -20,7 +20,7 @@ To better understand the causal approach taken in this paper, it is useful to co
  13                corrupt(internalRepresentation);
  14       \}
  15    \}
- 16    /* Will produce wrong code if structure has been corrupted */
+ 16    /* Will produce wrong code if corrupt called */
  17    generateCode(internalRepresentation);
 \end{code}
 \caption{A toy ``optimizing compiler'' with multiple bugs}
