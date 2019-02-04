@@ -81,11 +81,6 @@ of a fault localization.  Mutants that repair a failure provide insight
 into the nature of the fault, and, we hypothesize, more information the 
 closer they are to the center of the onion-ring. 
 
-An advantage of this method over some statistical approaches to
-localization is that it is not potentially confused in
-settings with multiple faults.  Each localization/explanation is based
-on a single failing test case, which in most cases fails due to only one
-fault.  In fact, other faults (and their failures) theoretically \emph{help} {\bf Repair} rank the mutants.
 
 In general, we expect {\bf Repair} to be used in the context of
 compiler (or other complex system) fuzzing, where there are numerous
@@ -96,11 +91,11 @@ expected, we propose an alternative method: let $f$ be an arbitrary
 test with as few repairing mutants as possible, to allow the distance
 metric to focus attention on a few key mutants. 
 
-Another advantage over many statistical approaches to 
-localization is that our methods are not potentially confused in 
+An advantage of this method over some statistical approaches to 
+localization is that it is not potentially confused in 
 settings with multiple faults.  Each localization/explanation is based 
 on a single failing test case, which in most cases fails due to only one 
-fault.  In fact, other faults help both methods rank localizations.
+fault.  In fact, other faults (and their failures) theoretically \emph{help} {\bf Repair} rank the mutants. 
 
 %\subsection{Coverage-Based Localizaton}
 
