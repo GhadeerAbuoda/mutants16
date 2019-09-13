@@ -6,3 +6,5 @@ Test cases are in .fmin files (final, minimized test).  For
 SpiderMonkey, these need to be executed in conjunction with the
 jsfunfuzz core code to define tryItOut, and for GCC they are simply C
 files to be compiled.
+
+Mutants for the compiler versions can be found at https://github.com/agroce/compilermutants
