@@ -1,0 +1,142 @@
+01-Jul-2019
+
+Dear Dr. Groce,
+
+We have completed reviewing manuscript ID STVR-19-0010 entitled "Using mutants to help developers distinguish and debug (compiler) faults," which you submitted to Software Testing, Verification and Reliability.  The comments of the reviewers are included at the bottom of this letter, along with a summary from the editors of the special issue.
+
+We have three reviews from experts in the field. Two recommend a minor revision, the third outright rejection. The editors of the special issue have recommended a major revision and I concur. Thus we would like to ask that the paper undergo a major revision for resubmission.
+
+Thanks once again for your submission. I hope you find the reviewers' comments helpful and that you will submit a revised version within six months. If you need more time, just let me know.
+
+When you submit a revision, you must include a response to reviewers, detailing how you addressed each specific comment. It needs to be uploaded as an "Additional File for Review but NOT for Publication" file, which the system will append to the submission for reviewing.
+
+If you feel that your paper could benefit from English language polishing, you may wish to consider having your paper professionally edited for English language by a service such as Wiley’s at http://wileyeditingservices.com. Please note that while this service will greatly improve the readability of your paper, it does not guarantee acceptance of your paper by the journal.
+
+Please note that submitting a revision of your manuscript does not guarantee eventual acceptance and the same reviewers will be invited to check the revision. Therefore, you should work just as hard on your response to the reviewers as you do the paper. The journal policy is that only one major revision is allowed, so if the revision is not of sufficient quality to be called at least a minor revision, we could not accept it.
+
+To submit your revised manuscript:
+
+1. Log in by clicking on the link below
+
+*** PLEASE NOTE: This is a two-step process. After clicking on the link, you will be directed to a webpage to confirm. *** 
+
+https://mc.manuscriptcentral.com/stvr?URL_MASK=788b4ff4b82445a19d6ec02fda38a854
+
+OR
+
+Log into https://mc.manuscriptcentral.com/stvr and click on Author Center. You will find your manuscript title listed under "Manuscripts with Decisions". Under "Actions," click on "Create a Revision." Your manuscript number has been appended to denote a revision. PLEASE DO NOT SUBMIT YOUR REVISIONS AS A NEW MANUSCRIPT.
+
+2. Follow the on-screen instructions. First you will be asked to provide your "Response to Decision Letter"--this is the response to reviewer comments that you prepared earlier.
+
+3. Click through the next few screens to verify that all previously provided information is correct.
+
+4. File Upload:  Delete any files that you will be replacing (this includes your old manuscript). Upload your new revised manuscript file, any replacement figures/tables, or any new files. Once this is complete, the list of files in the "My Files" section should ONLY contain the latest versions of everything.
+
+5. Review and submit: please be sure to double-check everything carefully so that your manuscript can be processed as quickly as possible.
+
+Once again, thank you for submitting your manuscript to Software Testing, Verification and Reliability. If you have any problems or questions regarding your manuscript please contact our Editorial Assistant Jose Bautista Francisco on STVR@wiley.com. I look forward to receiving your revision.
+
+All the best,
+
+Rob Hierons
+Software Testing, Verification and Reliability co-Editor-in-Chief
+
+Review Editor's Comments to Author:
+
+Review Editor
+Comments to the Author:
+The reviews acknowledge that the paper addresses a relevant and 
+timely problem, and that it brings an innovative contribution in the 
+field of fault localization. However, the first review raised several 
+concerns, so we are recommending a major revision of the paper to 
+address them:
+
+- Small number of compiler bugs studied in the paper: we recommend to 
+either consider more bugs, or to better justify why the scale of the 
+evaluation is sufficient for evaluating the proposed approach.
+
+- Applicability of the approach: we recommend to provide arguments or 
+evidence to support that the approach is applicable to some practical 
+scenarios.
+
+- Cost of the approach: we recommend to discuss how to keep the costs 
+of the approach within reasonable limits, and to acknowledge this 
+limitation (if this cannot be completely solved by your approach) in 
+a separate discussion in the paper.
+
+- Comparison with previous approaches: we recommend to provide more 
+arguments or other evidence to support the case that the approach can 
+bring benefits.
+
+The first review also made other suggestions for discussion and for 
+sharing the mutants. The other two reviews are mostly positive, and 
+they made some suggestions for deepening the study. 
+We recommend to perform a deeper analysis of some of the killed
+mutants and addressing some threat to validity, compatibly with the
+time limits of a major revision.
+
+Reviewers' Comments to Author:
+
+Reviewing: 1
+
+Comments to the Author
+Summary: This work aims to use mutants to facilitate compiler debugging, including identifying duplicate bugs (solving the fuzzer taming problem) and locating bugs for compilers. More specifically, this work defines a mutation-based metric for measuring the similarity of failing tests. The authors also conduct an empirical study to investigate the effectiveness using two compilers (SpiderMonkey and GCC).
+
+Details:
+
+This work extends the previous paper [41]. In general, the extension gives more insights, such as more discussions about the costs of the proposed approach and a more complete example. I really appreciate such deeper discussions. However, the increment is a little bit small for an extended paper. Especially for the evaluation, the scale of the study is not extended. Actually, the scale of the evaluation is small, since only two old versions are considered and only 55 compiler bugs are studied in total. In particular, the number of bugs used for evaluating fault localization is only 24! Such a small-scale evaluation cannot demonstrate the generality of the proposed approach. To show the generality of the proposed approach, it is very necessary to add more versions and bugs in the extended work.
+
+The application scenario of the proposed approach is limited. For the two widely-used compilers in the study, I do not think there are many failing tests during fuzzing testing for their latest versions. That is, the proposed approach cannot work for these stable compilers. Also, developers often conduct debugging when receiving bug reports from various users, but in this case, there is only one failing test for each bug. Therefore, the proposed approach cannot work, either. The proposed approach may work for newly developed compilers, but it is not frequent to develop new compilers in practice. Therefore, the practical value of the proposed approach is not clear.
+
+Another concern to the practical value of the proposed approach is the cost of the approach. The approach is to compile a lot of compiler mutants and run all tests for each compiler mutants. The paper reports that running all the GCC tests on these compiler mutants takes nearly 24 days in parallel. The cost for compiling these compiler mutants is not reported. According to our experience on compiling GCC, obviously, the cost is significantly larger than the cost of running tests. To sum up, the cost of the proposed approach is very huge (even though some methods to reduce the cost are discussed and applied), and thus the approach is very impractical. I don’t think developers can bear such huge cost in practice. 
+
+The results on solving the fuzzer taming problem are not enough good. From Figure 4 and 5, the line of the proposed approach is close to that of the compared approach. Even for GCC, the compared approach performs better than the proposed approach for the first 10 bugs. Intuitively, the effectiveness in the beginning is more important for the problem.
+
+The comparison between the proposed approach and MUSE/MUSEUM on fault-localization is not fair since the latter is adapted to a weaker version. Even though there is an additional study using the original version of MUSE/MUSEUM in Section 5.4, the study is not for compiler bugs. Therefore, it is still hard to say whether the proposed approach can outperform MUSE/MUSEUM for compiler bugs. In particular, there are many bugs that the proposed approach cannot locate at all. Therefore, the effectiveness of the proposed approach on fault localization is also not enough good (or unclear).
+
+In page-6, the authors present that an advantage of the proposed approach is that it can provide a kind of explanation of the fault: "if this mutant were applied, the fault would not exhibit". Actually, all mutation-based approaches (including MUSE/MUSEUM) can provide such explanation, since there also exist mutants making tests from "failing" to "pass" for them. Therefore, this is not the unique advantage of the proposed approach.
+
+In page-12, the discussion for the additional measure is not sufficient. More specifically, the effectiveness of the compared approach is not discussed. Therefore, it is hard to say whether the proposed approach performs better than before in terms of the additional measure.
+
+In Section 6.1, the extra benefits of compiler mutants are discussed. Will the authors release the compiler mutants? I think releasing these mutants are definitely helpful to evaluate the effectiveness of a new compiler testing technique.
+
+Reviewing: 2
+
+Comments to the Author
+This paper proposes a distance metric for execution test failures, based on program mutations, for automated fault identification (finding a ranking that avoids duplicate bugs) and localization (determining the likely cause of the bug). This is an interesting and important problem, particularly for compiler engineers. I too have experienced the phenomenon of "too many bug reports" to warrant applying further testing methods.
+
+A key insight of the paper is that a mutation causing two test failures to both pass is evidence that the failures are due to the same fault. The authors explain this with the aid of Section 4 (A simple example), which I found to be critical for understanding the underlying reasoning.
+
+The additional contributions for the journal version of this paper are fine. An even better contribution, in my opinion, would have been to try to experimentally address the threats to validity (Section 7). For example, applying the technique beyond the domain of compiler bugs. Or, to work with a real compiler team to determine whether this technique is applicable / palatable in practice. Acceptance or not, by a real-world compiler engineering team, would seem to me to be the ultimate test for the techniques developed (Something noted by the authors too, in the last para of Section 5.5).
+
+The changes I propose are minor and related to improving the presentation / clarity of the text.
+
+pg 2. Line 27. Is it valid for s' to range over all S? Should it instead range over S \ { r_j | j < i }? Otherwise, isn't min_{j<i}(d(s', r_j)) guaranteed to be 0? For example, for d(r_0, r_0)).
+pg 3. Line 29. This not a claim -> This is not a claim
+pg 5. Line 19. What about phrasing d() in terms of bitwise operators? bitcount(u xor v) / bitcount (u or v) seems clearer and closer to the set-wise definition of Jaccard distance.
+pg 6. Line 23. Is m a mutant or a set of mutants? Should R(f) \in m be R(f) \in M, where M is the set of mutants? The definition would be clearer for me if the ranking of mutant m for the failing test case case was denoted as r_f(m).
+pg 8. Line 28 and Line 36. These two snippets have a smaller text size than the other snippets in this section. Make them the same size.
+pg 10. Line 30. This seems to be mislabelling with Figure 5 and 6 together?
+pg 15. Table I. I could not understand how to interpret the results based on the text on pg 13. What does a rank of 1 mean compared to 22 or 4?
+
+Reviewing: 3
+
+Comments to the Author
+The paper proposes a metric for measuring the distance between test executions. In a sense the paper aims at measuring the semantic difference (higher difference means smaller overlap on program functionality) between test executions. This is achieved by using mutants and measuring the similarity between the correctness introduced by the mutant executions. The idea is that if two failing test cases for a compiler are made passing by the same mutants, those tests are more likely to be due to the same fault. The paper uses this metric to automatically identify and localize multiple compiler faults (the code under analysis has multiple faults). The paper reports results from 50 compiler faults and demonstrate improvements over state-of-the-art methods for fault identification and localization. Additionally, the paper shows that the proposed approach is also applicable to other types of programs. 
+
+The paper concerns the relationship between faults’ location and mutants’ location in compiler programs. This is relevant to STVR readership. It is also important, because it addresses a core aspect of automated debugging, the localization of software faults.
+
+In terms of the specific contribution, it appears to be a recent uptake of the idea of mutation-based fault localization. The paper is therefore asking empirical questions about the feasibility, applicability and practicality of these techniques in the context of compilers. Thus, I believe it makes a nice contribution with respect to the current state of the art. 
+
+This paper is an extension of the authors' ISSRE 2018 paper at the same topic. The authors have explained carefully and in detail how this paper extends the previous one. I am satisfied that the extension meets all the requirements of eligibility for consideration in terms of the additional new material and so the paper is acceptable in terms of the degree of extension from the previous paper. However, I do have a request for some clarifications that can improve the paper.
+
+The paper presents a new approach to tackle the multiple bug localization problem in the context of compilers. This is novel (only few approaches tackle the compiler context and none of them uses mutants). Also, the multiple bug localization problem is something that has been overlooked by recent research. The results are presented in an exemplary style, which make them easy to understand. Also, the paper is written in a clear and effective style, with a clear motivation and introduction. 
+
+I also like the idea of using mutation analysis because mutants provide useful semantic information related program defects that have not been fully explored. Interestingly, usual mutations help identifying multiple bugs (not only single bugs as done by related work). 
+
+The central claim of the paper is that "if two test cases that fail can be made to succeed by the same small modification to the original program P, this provides evidence that they fail due to the same fault". I agree that this is reasonable but in absence of such cases (or coincidental cases), there is also the signal from test cases that fail and are not succeeded by the same small modification to the original program (by mutants that are coupled with the underlying faults).  To this end, it would be interesting to see how well faults are identified by using a similarity between mutants’ kills and not just correctness kills.  
+Generally statistical fault localization is based on the assumption that a comprehensive test suite is available. Mutation-based fault localization relies on this assumption as it requires mutants to be killed by both failing and passing test cases. This is because when mutants killed by only failing tests, the techniques cannot filter coincidental kills (making them less effective). In view of this, when mutant kills are only caused by failing tests, using correctness information (mutants cause tests to turn from failing to passing) may help do such a filtering. However, when kills are of both passing and failing tests, the correctness information is not that useful (the signal from the statistical information of mutant kills, such as used by Metallaxis, is stronger). It will be great if the paper can provide some evidence on how well faults are identified by using a similarity between mutants’ kills and not just correctness kills.
+
+Another point requiring attention regards the assumption that faults are due to compiler optimizations. If so, then a combinatorial strategy that enables/disables compiler optimizations (and checks coverage), could be similarly effective. A related discussion would be useful. Please consider the following work that seems relevant: "A Combinatorial Testing-Based Approach to Fault Localization" TSE.
+
+Finally, the related work section could be improved by discussing and contrasting with the various mutation-based fault localization methods. A relatively complete list of mutation-based fault localization approaches can be found in the "Mutation Testing Advances: An Analysis and Survey" Advances in Computers 2019. Since there are not many mutation-based fault localization methods it will be good it the paper can discuss them all. Moreover, the paper occasionally refers to bug explanations. I think the MintHint paper, "MintHint: automated synthesis of repair hints" ICSE’14, could provide a nice insights on this aspects.
