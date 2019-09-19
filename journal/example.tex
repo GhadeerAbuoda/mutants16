@@ -92,7 +92,7 @@ been T2, T3, or T6.  After T1 and T5, the next test in the ranking will be the t
 neighbor among already chosen tests is furthest away.  The distances
 to the two tests already chosen are:
 
-{\scriptsize
+%{\scriptsize
 \begin{code}
                          11000  10110
 T2: (3)          10110   0.75   0.00
@@ -101,7 +101,7 @@ T4: (1, 2, 7)    11000   0.00   0.75
 T6: (1, 5, 6)    10101   0.75   0.50
 T7: (1, 2, 5, 6) 10000   0.50   0.67
 \end{code}
-}
+%}
 
 \noindent The FPF algorithm could choose either T3, T6, or T7 all of
 which have a nearest neighbor at distance 0.5.  Let
@@ -109,7 +109,7 @@ us assume it chooses T6.  At this point, the three distinct bugs
 are all ranked.  However, there is one interesting pattern remaining.
 The distances to tests are now:
 
-{\scriptsize
+%{\scriptsize
 \begin{code}
                          11000  10110  10101
 T2: (3)          10110   0.75   0.00   0.50
@@ -117,7 +117,7 @@ T3: (5, 6)       10101   0.75   0.50   0.00
 T4: (1, 2, 7)    11000   0.00   0.75   0.75
 T7: (1, 2, 5, 6) 10000   0.50   0.67   0.67
 \end{code}
-}
+%}
 
 \noindent The algorithm is forced to choose T7, the only remaining
 test that does not have the same bitvector as another test.  T7 is
@@ -142,11 +142,11 @@ at distance 0.75, while negating the condition on line 2 repairs
 nothing farther away than T3 at 0.5.
 Therefore, the localization for T2 is (in rank order):
 
-{\scriptsize {\tt 1: DELETE  10                corrupt(internalRepresentation);}}
+{ {\tt 1: DELETE  10                corrupt(internalRepresentation);}}
 
-{\scriptsize {\tt 2: NEGATE  07       if optimizeLevel > 1: \{}}
+{{\tt 2: NEGATE  07       if optimizeLevel > 1: \{}}
 
-{\scriptsize {\tt 3: NEGATE  03    if optimizeLevel > 0: \{}}
+{ {\tt 3: NEGATE  03    if optimizeLevel > 0: \{}}
 
 \subsection{The Onion Ring}
 
