@@ -48,13 +48,13 @@ ranked.  If it repairs even one very dissimilar failure, then it will
 be considered a poor localization.
 
 \begin{quote}
-For a set $F$ of failing test cases and $m$ of mutants, 
-the {\bf Repair} localization for $f \in F$, where $R(f) \in m$ is the set
+For a set $F$ of failing test cases and $M$ of mutants, 
+the {\bf Repair} localization for $f \in F$, where $R(f) \subseteq M$ is the set
 of mutants repairing $f$, ranks
-statements by the function $r$:
+statements by the function $r_f(m)$:
 %$$dmax(m,f) = max_{t : m \in R(t)} d(t,f)$$
 \[
-r(f) = 
+r_f(m) = 
 \begin{cases}
 \frac{1}{1 + max_{t \in F: m \in R(t)} d(t,f)} & m \in R(f)\\
 0 & m \not\in R(f)\\
@@ -66,7 +66,7 @@ r(f) =
 
 This ranks a mutant $m$ (and associated statement) by the inverse of the distance
 from $f$ to the most distant failing test also repaired by $m$, adding 1
-so that if $m$ only repairs failures at distance 0 $r$ is well defined
+so that if $m$ only repairs failures at distance 0 $r_f$ is well defined
 (and maximal).
 If $m$ does not repair $f$, it is not ranked at all.  One advantage of
 this approach over some statistical methods is that by

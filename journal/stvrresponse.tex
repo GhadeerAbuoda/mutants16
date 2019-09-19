@@ -1,0 +1,26 @@
+\documentclass{letter}
+%\def\today{September 10, 2019}
+\usepackage[letterpaper,left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm]{geometry}
+
+\begin{document}
+\begin{letter}{}
+
+  \address{Alex Groce\\School of Informatics, Computing \& Cyber Systems\\Northern Arizona University}
+
+  \opening{Dear editor and reviewers:}
+
+
+\noindent {\bf Reviewer 2:}
+
+\begin{itemize}
+\item {\bf pg 2. Line 27. Is it valid for $s'$ to range over all $S$? Should it instead range over $S \ { r_j | j < i }$? Otherwise, isn't $min_{j<i}(d(s', r_j))$ guaranteed to be 0? For example, for $d(r_0, r_0))$.}  If $s'$ is an already-ranked item, then indeed the $min$ will be zero.  That means that any $s$ will satisfy the inequality.  But for $s'$ not already ranked, the $min$ is only over distance to already-ranked items ($r_0 \ldots r_{i-1}$), and could be larger, thus falsifying the inequality.  In other words, the condition means that ranking any item next is as good as ranking an already-ranked item, but this only matters when all items are either already ranked or at distance zero from some already ranked item.  The condition can be re-worded as follows:  ``for all $s'$, the closest item to $s$ is at least as far away as the closest item to $s'$.''  This is trivially true when $s' = s$ and when $s' = r_j$ for some $j<i$.  But the other possible $s'$, not-ranked and not equal to $s$, force the ranking of the ``maximum minimum'' item.
+\end{itemize}
+
+  \closing{Sincerely,\\Alex Groce (agroce@gmail.com)\\Associate
+    Professor\\
+    School of Informatics, Computing \& Cyber Systems\\Northern
+    Arizona University \vspace{0.1in}\\Josie Holmes\\Affiliated Researcher\\
+    School of Informatics, Computing \& Cyber Systems\\Northern Arizona University}
+
+\end{letter}
+\end{document}
