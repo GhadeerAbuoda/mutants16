@@ -68,7 +68,7 @@ In order to check our results statistically, we sliced the FPF benchmark tests i
 
 \subsubsection{Fault Localization}
 
-Table \ref{bothtable} shows a comparison of three fault localization methods for the SpiderMonkey (and GCC) faults.  The first column is a fault ID. The next three columns show localization rankings.  A ranking of 1 means that a code location \emph{in} the faulty code was presented to the user as the most likely location of the fault by the methodxs.  A ranking of, e.g., 22 however, would mean that a user examining code locations proposed as faulty by the method would not reach any faulty code until examining the 22nd such location proposed by the method.  A dash for a column means that localization did not rank any faulty statements, or assigned all faulty statements suspiciousness of 0.0.  The three rankings are: our {\bf Repair} localization, the MUSE \cite{MUSE} localization, and the MUSEUM \cite{multilingual} localization.  MUSEUM uses the same formula as MUSE, but works better for multiple faults because it uses only one failure.  The MUSE/MUSEUM formulas normally make use of information from passing tests as well: when mutating a statement makes a passing test case fail, it makes the statement \emph{less} suspicious, by a weighted amount. The weight assigned to information from passing tests in our setting would likely be low (due to the ratios of repairs to mutation kills).  In a limited sense, information from passing tests is already incorporated in our results.  Throwing out all mutants that are killed by any passing test as potential repairs/localizations ensures that the rankings of all statements that are in MUSE/MUSEUM rankings are correct, \emph{relative to each other}.  By definition, passing tests have no influence on the suspiciousness of these mutants.  However, there may be other mutants that 1) repair a failure and 2) are killed by some test case: these could, if enough different ones repaired the same faulty statement, improve MUSE/MUSEUM results, though in practice this is extremely unlikely.  We reject such mutants in part to keep costs low, and in part because we think that the causal information contained in such mutants, that ``fix'' a failure but also break some passing test(s), is problematic.  They seem likely to be less useful as explanations of the causes of a failure, since they do not impact the program semantics in a way that is only known to be beneficial, and could potentially even mislead a user if used as explanations.
+Table \ref{bothtable} shows a comparison of three fault localization methods for the SpiderMonkey (and GCC) faults.  The first column is a fault ID. The next three columns show localization rankings.  A ranking of 1 means that a code location \emph{contained in} the actual faulty code locations was presented to the user as the most likely location of the fault by the method: the method has precisely identified the fault location.  A ranking of, for instance, 22, on the other hand would mean that a user examining code locations proposed as faulty by the method would not reach any faulty code until examining the 22nd such location proposed by it.  A dash for a column means that localization did not rank any faulty statements, or assigned all faulty statements suspiciousness of 0.0.  The three rankings are: our {\bf Repair} localization, the MUSE \cite{MUSE} localization, and the MUSEUM \cite{multilingual} localization.  MUSEUM uses the same formula as MUSE, but works better for multiple faults because it uses only one failure.  The MUSE/MUSEUM formulas normally make use of information from passing tests as well: when mutating a statement makes a passing test case fail, it makes the statement \emph{less} suspicious, by a weighted amount. The weight assigned to information from passing tests in our setting would likely be low (due to the ratios of repairs to mutation kills).  In a limited sense, information from passing tests is already incorporated in our results.  Throwing out all mutants that are killed by any passing test as potential repairs/localizations ensures that the rankings of all statements that are in MUSE/MUSEUM rankings are correct, \emph{relative to each other}.  By definition, passing tests have no influence on the suspiciousness of these mutants.  However, there may be other mutants that 1) repair a failure and 2) are killed by some test case: these could, if enough different ones repaired the same faulty statement, improve MUSE/MUSEUM results, though in practice this is extremely unlikely.  We reject such mutants in part to keep costs low, and in part because we think that the causal information contained in such mutants, that ``fix'' a failure but also break some passing test(s), is problematic.  They seem likely to be less useful as explanations of the causes of a failure, since they do not impact the program semantics in a way that is only known to be beneficial, and could potentially even mislead a user if used as explanations.
 
 Discussion with the MUSE/MUSEUM authors confirms  that adding information for passing tests, while costly, would likely improve the MUSE and MUSEUM results, given the weakness of our oracles, particularly for SpiderMonkey, and should be considered essential for ideal application of their approach.  Because the cost of recording the full mutant analysis matrix for all passing tests (rather than considering a mutant killed as soon as one test fails, as we do) is very high, and we would like to produce a comparison over a fixed computational cost, we give results for MUSE/MUSEUM over failing tests only, cautioning that we are not sure what the impact of this choice is on faults that were not localized.  For similar reasons of keeping costs low, we also used the mutation operators of Andrews vs. the more extensive Proteum \cite{Proteum} operators used in MUSE/MUSEUM's evaluations.  Even with these restrictions, running all mutants on passing tests until at least a single kill was observed took about 3 times as long as the search for repairs, which we already consider a potentially problematic cost.  In Section \ref{sec:otherfaults} we provide some comparisons with MUSEUM and MUSE fault localization in the context of a full mutation result matrix using their preferred set of operators.
 
@@ -350,6 +350,81 @@ More importantly, the APFD actually \emph{improves} with this change.  For Spide
 Operator selection can, in principle (and in one case in our data set, in practice) reduce the effectiveness of fault localization.  However, with hot mutants, it is easy, if localization using only negations and deletions is not helpful, to use the same method as proposed above for random selection to compute a more precise localization for a test.  This should usually not be required, however:  we noted that in most cases where a mutant involved in a localization was an operator replacement, the mutant was usually equivalent in behavior to a condition negation.  Constant replacement repairs were simply very rare and not involved in any of the useful compiler localizations.  The problem observed with random sampling, that the metric of distances to other tests may be inaccurate, is of much less concern with operator selection:  as far as we can tell, based on FPF discovery curves and APFD, distances are \emph{more} accurate using only the mutants we propose.
 
 While using only some mutation operators \emph{may} degrade fault localization performance for non-compiler faults, we propose it as the default way to use our approaches in compiler fuzzer taming  and debugging scenarios.  Furthermore, we speculate, based on the results of Qi et al. \cite{achour} showing that most actual correct fixes in program repair are functionality deletions, that limiting mutants used to condition negations and statement deletions (or even adding an operator that converts conditionals to a {\tt False} constant, as is provided by some tools \cite{RegExpMut}), might be the best practice for complex programs and ``deep'' (hard to debug) faults in general.  It seems unlikely that mutation operators will produce many fixes that do not simply avoid broken functionality (vs. actually fix it), for the kinds of faults that are actually hard for programmers to locate, understand, and correct.
+
+\subsubsection{Combinatorial Control of Optimizations}
+
+Finally, if we assume that in the setting of compilers, faults are due to optimizations, it may be possible to use a combinatorial approach to turning on/off optimizations as a cheap equivalent of mutants; Ghandehari et. al \cite{CombTestFaultLoc} proposed a combinatorial approach to fault localization and such a method might work fairly well in this setting.  Further experimental effort would be required to determine how useful such a method would be; a major concern is that rather than simply ``turning off'' optimizations as one might at the command line, some mutants change the result of a check as to whether an optimization is valid for a piece of code.  GCC and LLVM also do not, unfortunately\footnote{Unfortunately, at least, from this combinatorial point of view; as developers we may suspect that modern compilers already have plenty of command-line options.}, expose all the optimizations they perform as individually controllable by users.  Based on our examination, the level of control over optimizations provided by GCC 4.3.0 was simply too coarse-grained to enable effective replacement of mutants, and SpiderMonkey 1.6 offers almost no control over optimizations, as would be expected of a JIT usually used in a browser context; it does not work as a command-line tool that takes an input file and produces a binary.  There may be API calls to control optimization in some way, but these were not easy to discover, or practical for a developer to use.
+
+\section{Fuzzer Taming for A Non-Compiler Target: Fuzzgoat}
+
+%\subsection{Fuzzgoat}
+
+\begin{figure}
+   \centering
+        \includegraphics[width=1.0\textwidth]{afl_fuzzgoat.png}
+        \caption{AFL run for fuzzgoat}
+        \label{aflfuzzgoat}  
+  \end{figure}
+
+  Fuzzgoat (\url{https://github.com/fuzzstati0n/fuzzgoat}) is a well-known backdoored C program used to test fuzzers and other analysis tools.  It is an interesting subject to consider non-compiler fuzzer taming because it is a single program version with 4 distinct bugs with complete ground truth, and widely viewed as representative of a typical fuzzing use-case.  We ran AFL \cite{aflfuzz} for over 7 hours on the program, generating 4,244 crashing inputs (Figure \ref{aflfuzzgoat} shows a screenshot from just before we terminated the run).  AFL's internal triaging methods reduced this to a set of 38 crashes it considered distinct.  We terminated the run once it had been nearly three hours since a new distinct crash was detected.
+
+  These crashes exhibit a classic fuzzer taming structure.  Three of the bugs are easy to identify: they are triggered by 15, 14, and 11 of the 38 AFL-produced crashing inputs, respectively, and all have multiple inputs that uniquely detect that bug, and no other.  The fourth bug, however, is only triggered by \emph{three} of the 38 inputs, and is never uniquely present (any input triggering it also triggers at least one other bug).  This bug was only found by AFL after more than an hour of fuzzing, in fact.
+
+  This is a classic fuzzer taming problem, albeit on a smaller scale than with the compilers:  a user will probably not want to inspect the highly-redundant set of 38 inputs, but will want to see all four distinct faults, while examining as few inputs as possible.
+
+  Applying the mutation-repair based approach is relatively easy here.  We used the {\bf universalmutator} tool \cite{RegExpMut} to generate 18,489 mutants for fuzzgoat.  This tool is far more aggressive than Andrews' tool, in terms of operators used, and is more widely available to typical users.  Of these 6,809 mutants actually compile, and trivial compiler equivalance \cite{TCE} can further reduce the set to 2,899 mutants to be used in producing repair bitvectors.  Computing the full bitvector set and all distances for the 38 crashes required just over 10 minutes.  While compiling and running mutants is a serious computational burden in the setting of a production compiler, it is negligible compared to the time required for fuzzing, in a typical fuzzing session, we suspect, even without using such simple additional reductions as checking the mutants for code covered by some crashing input.  This is partly because the number of mutants to consider is smaller, and partly because compiling GCC or SpiderMonkey is simply much slower than compiling more typical small-to-medium-sized fuzzing targets.  Fuzzing a very complex target, such as a database (e.g., LevelDB or RocksDB) might be more like compiler fuzzing, however.  Input runtime is also smaller for most non-compiler targets, we suspect.
+  
+\begin{table}
+\centering
+{\scriptsize
+\begin{tabular}{|l||r|r|r|r|}
+\hline
+Method & Cutoff & Mean bugs & \# Perfect & \% Perfect\\
+  \hline
+  Repair & 3 & 3.00 & 0 & 0.00\% \\
+  Coverage & 3 &  3.10 & 13 & 34.21\% \\
+  Random & 3 & 2.58 & 3 & 7.89\%\\
+  \hline
+  Repair & 4 & 3.42 & 16 & 42.10\%\\
+  Coverage & 4 &  3.39 & 15 & 39.47\% \\
+  Random & 4 & 2.74 & 6 & 15.79\%\\  
+  \hline 
+    Repair & 5 & 4.00 & 38 & 100.00\%\\
+  Coverage & 5 &  3.50 & 19 & 50.00\%\\
+  Random & 5 & 3.29 & 16 & 42.10\%\\  
+  \hline
+    Repair & 6 & 4.00 & 38 & 100.00\% \\
+  Coverage & 6 &  3.50 & 19 & 50.00\%\\
+  Random & 6 & 3.18 & 11 & 28.95\%\\
+  \hline
+  \multicolumn{5}{c}{$\ldots$} \\
+\hline 
+    Repair & 10 & 4.00 & 38 & 100.00\% \\
+  Coverage & 10 &  3.63 & 24 & 63.16\%\\
+  Random & 10 & 3.58 & 23 & 60.53\%\\  
+  \hline
+    Repair & 11 & 4.00 & 38 & 100.00\% \\
+  Coverage & 11 &  3.63 & 24 & 63.16\%\\
+  Random & 11 & 3.66 & 25 & 65.79\%\\  
+  \hline
+    \multicolumn{5}{c}{$\ldots$} \\
+  \hline
+    Repair & 17 & 4.00 & 38 & 100.00\% \\
+  Coverage & 17 &  3.97 & 37 & 97.37\%\\
+  Random & 17 & 3.84 & 32 & 84.21\%\\  
+  \hline
+    Repair & 18 & 4.00 & 38 & 100.00\% \\
+  Coverage & 18 &  4.00 & 38 & 100.00\% \\ 
+  Random & 18 & 3.82 & 31 & 81.58\%\\  
+  \hline
+\end{tabular}
+}
+\caption{Fuzzgoat triage results}
+%\vspace{-0.2in}
+\label{table:fuzzgoat}
+\end{table}
+
+Table \ref{table:fuzzgoat} shows fuzzer taming results for fuzzgoat, using our repairing-mutant-based approach, Chen et. al's \cite{PLDI13} statement coverage method, and (as a baseline) random ordering.  For repair-based ranking and statement coverage-based ranking, we show the mean result over all 38 possible choices for first test to rank.  Random is the mean over 38 random rankings.  {\bf Cutoff} indicates the point at which the user stops examining crashing inputs, and {\bf Mean bugs} indicates how many of the four distinct faults, on average, the method, with that cutoff, allowed the user to see within that cutoff.  {\bf \# Perfect} describes how many of the 38 experiments produced a perfect triage, where all of the bugs were seen before the cutoff.  We begin {\bf Cutoff} at 3, since 3 is the minimum possible number of inputs a user must examine to find all four bugs (some inputs cause a crash due to either of two bugs, so are able to identify two faults).  Coverage-based FPF is better than repair-based FPF, for fuzzer taming, if a user only examines 3 of the 38 crashes.  However, once a user is willing to look at 4 inputs, mutation-repair is better, and if the user is willing to look at 5 of the 38 inputs, our approach guarantees all of the distinct bugs will be seen.  Statement coverage-based FPF, in contrast, requires a user to look at {\bf 18} inputs before providing such a guarantee.  Indeed, there is a more than 25\% chance of missing one bug even if the user looks at 10 inputs, and random ranking performs almost as well as coverage-based FPF, once a user is willing to examine 10 or more inputs.  In the table, cutoffs for which statement-based coverage performance is identical to the previous cutoff are omitted.  That the coverage-based ranking does not improve its performance between cutoff of 6 and 9, and 11 and 16, shows how weak the signal from the distinct faults is, in terms of code coverage.
 
 \section{Threats to Validity}
 
