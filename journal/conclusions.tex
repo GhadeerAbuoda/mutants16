@@ -14,7 +14,16 @@ to identify the set of faults in a large set of redundant compiler failures
 than 50 faults, over the Mozilla SpiderMonkey 1.6 JavaScript compiler and
 GCC 4.3.0, our methods improve fault identification (``fuzzer taming''), in a statistically significant way
 (with effect size of about 3\% improvement), over
-the \emph{best} (for each subject program) of over 16 metrics considered in previous work.
+the \emph{best} (for each subject program) of over 16 metrics
+considered in previous work.
+
+We also demonstrated that our approach can be cheap and effective in
+fuzzer taming not targeting compilers.  It performed much better than
+a coverage-based ranking approach, reliably revealing distinct faults
+in the first few inputs presented, and is more general in application
+than the (to our knowledge) best competing method, semantic crash
+bucketing \cite{SCB}.
+
 Preliminary investigation also shows improvement (for a shared
 mutation testing budget) over previous mutant-based fault localization
 methods, for the same tests and a subset of 24 faults with known
@@ -31,7 +40,7 @@ produce a very small incorrect localization (1-3 statements), or
 produce a very high quality localization.  Restricting to the cases
 where we consider {\bf Repair} applicable (7 faults) {\bf Repair}
 perfectly localized 4 of them, and produced a 1 or 2 statement
-incorrect localization for the others.
+incorrect localization for the others.  
 
 As future work, we plan to apply the mutation-based metric to other
 fuzzer taming and fault localization problems.  The highly varying
@@ -84,4 +93,4 @@ particular, we thank Shin Hong and Thierry Chekam for prompt
 assistance beyond the call of duty.  We would like to thank the
 authors of the Semantic Crash Bucketing \cite{SCB} study, in
 particular Rijnard van Tonder and Claire Le Goues, for their assistance in
-comparing our results with SCB.
+comparing our results with SCB.}
