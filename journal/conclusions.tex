@@ -86,6 +86,25 @@ execution peers \cite{Sumner2011}, for example to help operators of
 spacecraft find similar behaviors to telemetry downlinks in testbed
 history \cite{KlausRajeev,scriptstospecs}.
 
+Finally, the results of our comparison with semantic crash bucketing
+(SCB) \cite{SCB},
+which we consider the state-of-the-art in general-purpose fuzzer
+taming, suggest what may be the most important line of future work.
+When SCB applies to a set of crashes, it is cheap, effective, and
+provides a useful bucketing.  However, it is very hard to imagine the
+manual-patch template approach of SCB ever applying to complex compiler
+bugs, or even to all the kinds of faults that might be found in
+fuzzing of other targets, as discussed in Secton \ref{fuzzgoat}.  We
+believe, however, that a
+combination of SCB with our FPF-and-mutant-repair approach, perhaps using operator
+selection to approximate a large, imprecise, set of ``patch
+templates,'' and using semantic guidance to select among these, might offer a fuzzer taming method that is both
+extremely practical (like SCB) but also truly general-purpose (like
+our mutation-based approach).  In Section \ref{fuzzgoat} we propose a
+simple two-phase approach, using SCB first, then our approach, but we
+believe a more principled combination of the methods might provide
+truly effective fuzzer taming, at a reasonable cost.
+
 {\scriptsize {\bf Acknowledgements:} The authors would like to thank the authors of
 the MUSEUM \cite{multilingual} and Metallaxis-FL vs. MUSE 
 \cite{Papadakis} studies for access to their data sets.  In
