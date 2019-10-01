@@ -1,11 +1,13 @@
 \section{A Mutant-Based Distance Metric}
 
-For every failing test case, its response to mutants defines a bit-vector, with
-length equal to the number of mutants that repaired any test case,
+For every failing test case, the response (fixing or not fixing the
+failure) to all mutants defines a bitvector, with
+length equal to the number of mutants that repaired \emph{any} test
+case (or all mutants; it does not matter for our proposed metric),
 where a 1 bit indicates that the mutant in question repairs this test
 case\footnote{By \emph{repairing} a failing test we here mean that a mutant
 causes the test to pass, \emph{and} the mutant does not cause
-other, previously passing tests, to fail.}.  These cannot be effectively compared with Hamming distance. Consider $t_1$ and $t_2$, both repaired
+other, previously passing tests, to fail.}.  These bitvectors cannot be effectively compared with Hamming distance. Consider $t_1$ and $t_2$, both repaired
 by 100 mutants.  If these two test cases share 90 common repairing
 mutants, and disagree for 10, they have a Hamming
 distance of 20.  This makes them ``less similar'' than two test cases,
