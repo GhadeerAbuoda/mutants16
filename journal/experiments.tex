@@ -159,7 +159,7 @@ behavior of the test.  In some cases, this behavioral change may be
 limited to changes in program state and data values.  However, the
 vast majority of mutant repairs \emph{for a compiler} can be expected to also modify the code coverage of a
 test; in our compiler experiments, there were no repairs that did not change
-coverage; this would be very unlikely to hold in other software settings, where many bugs related to data values; for well-fuzzed compilers, however, few bugs are simple, e.g., off-by-one bugs in an integer value.  If a fault can be avoided by disabling a
+coverage; this would be very unlikely to hold in other software settings, where many bugs are related to data values; for well-fuzzed compilers, however, few bugs are simple, e.g., off-by-one bugs in an integer value.  If a fault can be avoided by disabling a
 problematic optimization in a compiler, this naturally leads to
 changed coverage.  If the fault is due to a bad conditional, where a
 program path should include additional code, the repair will often
